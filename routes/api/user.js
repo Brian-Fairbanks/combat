@@ -3,7 +3,7 @@ const userController = require("../../controllers/userController");
 
 // Match with "/api/user/:id"
 router
-  .route("/:id")
-  .get(userController.findById);
+  .route("/:name")
+  .get(userController.findByName);
 
   module.exports = router;
