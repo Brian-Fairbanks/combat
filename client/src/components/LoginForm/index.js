@@ -25,7 +25,7 @@ function LoginForm() {
                 password: password
             }).then(() => {
                 console.log("User is logged in...");
-                window.location.replace("/game");
+                window.location.replace("/");
             }).catch(err => {
                 console.log("Something went wrong while logging in...", err);
                 // Else, set wrongCredentials to true
@@ -63,7 +63,7 @@ function LoginForm() {
                     className="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                     id="password"
                     type="password"
-                    placeholder="******************"
+                    placeholder="********"
                     ref={passwordRef}
                 />
                 {
