@@ -1,18 +1,32 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import API from "../../utils/API";
+import UserContext from "../../utils/userContext";
 
 function Profile(props) {
     // Deconstruct
     const { user } = props;
 
-    console.log(user);
+    // Current User
+    const { user: curUser } = useContext(UserContext);
+
+    const [owner, setOwner] = useState(false);
+
+    useEffect(() => {
+        if (user && curUser){
+            if (user._id === curUser._id){
+                setOwner(true);
+            }
+        }
+    }, [curUser])
+    
 
     return (
         <div>
             {/* User Name and Icon */}
             <h1 className="text-center text-5xl bg-dark text-white">
                 {user.username}
+                {owner?"(you)":""}
             </h1>
 
 
@@ -44,7 +58,7 @@ function Profile(props) {
                 </div>
 
                 {/* Characters section */}
-                <div class="w-1/2">
+                <div className="w-1/2">
                     <section className="max-w-sm rounded overflow-hidden shadow-lg bg-lblue m-auto">
                         <div className="px-6 py-4">
                             <div className="font-bold text-xl mb-2">Characters</div>
