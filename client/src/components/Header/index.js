@@ -37,8 +37,8 @@ function Header() {
                         <Link to="/login" className="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-red-500 hover:bg-white mt-4 lg:mt-0">Login</Link>
                         :
                         <div>
-                            <div className="inline-block text-sm px-4 py-2">
-                                Hello {user.username}
+                            <div className="inline-block text-sm px-4 py-2 text-white">
+                                Hello <Link to={"/user/"+user.username} className="text-white font-semibold ">{user.username}</Link>
                             </div>
                             <button className="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-red-500 hover:bg-white mt-4 lg:mt-0">Logout</button>
                         </div>

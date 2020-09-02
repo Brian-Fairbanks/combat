@@ -8,6 +8,10 @@ const userSchema = new Schema({
     type: String,
     unique: true
   },
+  // avatar:{
+  //   type: Schema.Types.ObjectId,
+  //   ref: "Image"
+  // },
   password: {
     type: String,
     trim: true,
