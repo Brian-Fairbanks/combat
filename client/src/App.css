@@ -1,5 +1,30 @@
+/*
+https://coolors.co/993f18-ef941b-908999-001a2f-1b1515
+*/
+
+
 body {
     height: 100vh;
+    background:#5B5F97;
+}
+
+/*
+Colors
+*/
+.bg-lblue{
+    background:#908999;
+}
+.bg-dblue{
+    background:#001A2F;
+}
+.bg-dark{
+    background:#1B1515;
+}
+.bg-red{
+    background:#993F18;
+}
+.bg-gold{
+    background:#EF941B;
 }
 
 #userError{

@@ -11,11 +11,10 @@ module.exports = {
     db.User
       .findOne({username: req.params.name})
       .then(dbModel => {
-        console.log(dbModel);
-        if(dbModel){
-          res.json(dbModel);
+        if(dbModel == null || dbModel == 'undefined'){
+          res.status(202).send({ error: "User Could Not Be Found" })
         }
-        res.status(422).json("User not Found")
+        res.json(dbModel);
       })
       .catch(err => res.status(422).json(err));
   },
