@@ -28,7 +28,7 @@ function SignupForm() {
                     password: password
                 }).then(() => {
                     console.log("User is signed up and logged in...");
-                    window.location.replace("/game");
+                    window.location.replace("/");
                 }).catch(err => {
                     console.log("Something went wrong while signing up...", err);
                 })
@@ -70,7 +70,7 @@ function SignupForm() {
                     className="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="password"
                     type="password"
-                    placeholder="******************"
+                    placeholder="*****"
                     ref={passwordRef}
                 />
             </div>
@@ -82,7 +82,7 @@ function SignupForm() {
                     className="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                     id="confirmPassword"
                     type="password"
-                    placeholder="******************"
+                    placeholder="*****"
                     ref={confirmPasswordRef}
                 />
                 {
