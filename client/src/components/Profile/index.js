@@ -61,7 +61,10 @@ function Profile(props) {
                 <div className="w-1/2">
                     <section className="max-w-sm rounded overflow-hidden shadow-lg bg-lblue m-auto">
                         <div className="px-6 py-4">
-                            <div className="font-bold text-xl mb-2">Characters</div>
+                            <div className="font-bold text-xl mb-2">
+                                Characters
+                                <Link to="/Character">+</Link>
+                            </div>
                             <div className="text-gray-700 text-base">
                                 {
                                     user.friends.map(friend => {

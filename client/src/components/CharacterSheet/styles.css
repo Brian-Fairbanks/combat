@@ -1,0 +1,19 @@
+.statTop{
+  margin-top:-15px;
+}
+
+.stat{
+  margin-top:10px;
+}
+
+.styledBorder1{
+  border-image: url(./styledBorder.svg);
+  border-image-slice: 35% 35% fill;
+  border-image-width: 14px 10px;
+}
+
+.styledBorder2{
+  border-image: url(./styledBorder2.svg);
+  border-image-slice: 35% 35% fill;
+  border-image-width: 14px 10px;
+}

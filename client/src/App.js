@@ -11,6 +11,7 @@ import User from "./pages/User";
 import Header from "./components/Header";
 
 import UserContext from './utils/userContext';
+import CharacterSheet from './components/CharacterSheet';
 
 function App() {
 
@@ -51,6 +52,10 @@ function App() {
             <Route exact path="/user/:userName" >
               <Header />
               <User />
+            </Route>
+            <Route exact path="/Character">
+              <Header />
+              <CharacterSheet />
             </Route>
         </Switch>
       </Router>
