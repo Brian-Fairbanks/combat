@@ -1,40 +1,186 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import './styles.css';
-import { Link } from "react-router-dom";
-import API from "../../utils/API";
+// import { Link } from "react-router-dom";
+// import API from "../../utils/API";
 
 const vertInput = "shadow appearance-none w-full rounded p-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline";
-const horInput = "shadow appearance-none w-1/4 rounded p-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block";
+// const horInput = "shadow appearance-none w-1/4 rounded p-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block";
 const numInput = "shadow appearance-none w-1/2 rounded p-1 text-gray-700 text-xs leading-tight focus:outline-none focus:shadow-outline text-center";
+
+const statList = ["str", "dex", "con", "int", "wis", "cha"];
 
 function CharacterSheet() {
 
-  const usernameRef = useRef();
-  const playerclass = useRef();
-  const playerStr = useRef(20);
-  const playerDex = useRef(0);
-  const playerCon = useRef(0);
-  const playerInt = useRef(0);
-  const playerWis = useRef(0);
-  const playerCha = useRef(0);
+  const usernameRef = useRef(0);
+  const playerclass = useRef(0);
+  // const playerStr = useRef(0);
+  // const playerDex = useRef(0);
+  // const playerCon = useRef(0);
+  // const playerInt = useRef(0);
+  // const playerWis = useRef(0);
+  // const playerCha = useRef(0);
 
   // const [missingField, setMissingField] = useState(false);
   // const [wrongCredentials, setWrongCredentials] = useState(false);
 
-  const [stats, setStats] = useState({str:0, dex:0, con:0, int:0, wis:0, cha:0});
+  const [stats, setStats] = useState({
+    proficiency: 5,
+    INSPIRARTION: 0,
+    str: 20,
+    dex: 14,
+    con: 16,
+    int: 12,
+    wis: 14,
+    cha: 18,
 
-  function myChangeHandler(stat, val){
-    setStats({...stats, [stat]:Math.floor(val/2)-5})
+    strRolls: [
+      { name: "Saving Throw", score: 0, proficient: false, toolTip: "" },
+      { name: "Athletics", score: 0, proficient: false, toolTip: "" },
+    ],
+
+    dexRolls: [
+      { name: "Saving Throw", score: 0, proficient: false, toolTip: "" },
+      { name: "Acrobatics", score: 0, proficient: false, toolTip: "" },
+      { name: "Slight of Hand", score: 0, proficient: false, toolTip: "" },
+      { name: "Stealth", score: 0, proficient: false, toolTip: "" },
+    ],
+
+    conRolls: [
+      { name: "Saving Throw", score: 0, proficient: false, toolTip: "" },
+    ],
+
+    intRolls: [
+      { name: "Saving Throw", score: 0, proficient: false, toolTip: "" },
+      { name: "Arcana", score: 0, proficient: false, toolTip: "" },
+      { name: "History", score: 0, proficient: false, toolTip: "" },
+      { name: "Investigation", score: 0, proficient: false, toolTip: "" },
+      { name: "Nature", score: 0, proficient: false, toolTip: "" },
+      { name: "Religion", score: 0, proficient: false, toolTip: "" },
+    ],
+
+    wisRolls: [
+      { name: "Saving Throw", score: 0, proficient: true, toolTip: "" },
+      { name: "Animal Handling", score: 0, proficient: false, toolTip: "" },
+      { name: "Insight", score: 0, proficient: true, toolTip: "" },
+      { name: "Medicine", score: 0, proficient: false, toolTip: "" },
+      { name: "Perception", score: 0, proficient: false, toolTip: "" },
+      { name: "Survival", score: 0, proficient: false, toolTip: "" },
+    ],
+
+    chaRolls: [
+      { name: "Saving Throw", score: 0, proficient: true, toolTip: "" },
+      { name: "Deception", score: 0, proficient: false, toolTip: "" },
+      { name: "Intimidation", score: 0, proficient: true, toolTip: "" },
+      { name: "Performance", score: 0, proficient: false, toolTip: "" },
+      { name: "Persuasion", score: 0, proficient: true, toolTip: "" },
+    ]
+
+
+  });
+
+  // any time a user manually changes a stat value
+  function statChangeHandler(stat, val) {
+    statUpdate(stat, val, { type: "stat" });
   }
+
+  // any time a user manually changes a skill value
+  function profChangeHandler(stat, index, val) {
+    statUpdate(stat, stats[stat], { type: "prof", index, val });
+  }
+
+  function baseProfChangeHandler(val) {
+    statUpdate(null, val, { type: "baseProf", val});
+  }
+
+  // runs once page loads, and stats are populated from the database
+  useEffect(() => {
+    console.log(stats.proficiency)
+    statList.forEach(stat => {
+      statUpdate(stat, stats[stat], { type: "first"});
+    })
+  }, [])
+
+
+  // updates a stat, and modifies all associated numbers
+  //=======================================================
+  function statUpdate(stat, statVal, data) {
+    // console.log(`setting ${stat+"Mod"} to ${Math.floor( stats[stat] /2)-5}`)
+    let statMod = Math.floor(statVal / 2) - 5;
+    let valsToSet = {};
+
+    console.log(data);
+    // when changing proficiency...
+    if (data.type === "baseProf") {
+      console.log("Only chaning proficiency");
+      valsToSet = {
+        PROFICIENCY:statVal
+      }
+      statList.forEach(stat => {
+        statMod = Math.floor(stats[stat] / 2) - 5;
+        console.log(statMod);
+        valsToSet[stat+"Rolls"] = (updateChecks (stats[stat+"Rolls"], stat, statMod, data));
+      })
+
+    }
+    // for all else...
+    else {
+      valsToSet = {
+        [stat]: statVal,
+        [stat + "Mod"]: statMod
+      }
+      valsToSet[stat + "Rolls"] = (updateChecks(stats[stat + "Rolls"], stat, statMod, data));
+    }
+
+    console.log(valsToSet);
+
+    setStats((prevState) => ({
+      ...prevState,
+      ...valsToSet
+    }));
+  }
+
+  // Helpers for StatUpdate
+  //=================================
+
+  function updateChecks(valsToSet, stat, statMod, data) {
+    let profBoost = stats.proficiency;
+    if (data.type == "baseProf") {
+      profBoost = data.val;
+    }
+
+    return valsToSet.map((roll, index) => {
+      // check if a proficiency needs to be changed
+      let prof = {};
+
+      if (data.type === "prof" && data.index === index) {
+        console.log(`Change Proficiency for ${roll.name} to ${data.val}`)
+        prof = { proficient: data.val };
+      }
+
+      return (
+        {
+          ...roll,
+          score: prof.proficient ? profBoost + statMod : statMod,
+          score: roll.proficient ? profBoost + statMod : statMod,
+          ...prof
+        }
+      )
+    });
+  }
+
+
+  // Exporting Character Sheet
+  // =======================================
 
   function handleSave(e) {
   }
 
-  
 
+  // Printing sheet for view
+  //========================================
   return (
     <form className="grid grid-cols-3 bg-white shadow-lg rounded p-3 py-5 mb-4 sm:w-2/4 my-4 mx-auto">
-      
+
       {/* 1/1 */}
       <div className="std-border my-auto p-2">
         <input
@@ -50,7 +196,7 @@ function CharacterSheet() {
 
       {/* 1/2 */}
       <div className="col-span-2 std-border mb-5 p-2">
-      <div className="w-3/12 inline-block">
+        <div className="w-3/12 inline-block">
           <input
             className={vertInput}
             id="class"
@@ -140,7 +286,7 @@ function CharacterSheet() {
       <div className="std-border row-span-2">
         <div className="">
 
-          <div className="overflow-hidden">
+          <div className="overflow-hidden mb-4">
             {/* Proficiency Bonus */}
             <div className="flex  my-1 mx-3">
               <div className="styledBorder1 w-8 flex justify-center items-center p-1">
@@ -148,9 +294,10 @@ function CharacterSheet() {
                   className={"h-full w-6 text-center rounded-full text-xs"}
                   id="class"
                   type="text"
-                  ref={playerclass}
+                  defaultValue={stats.proficiency}
+                  onChange={e => baseProfChangeHandler(parseInt(e.target.value))}
                 />
-                </div>
+              </div>
               <div className="styledBorder2 flex-grow flex justify-center items-center px-2">
                 <label className=" text-gray-700 text-2xs" htmlFor="username">
                   PROFICIENCY BONUS
@@ -165,9 +312,10 @@ function CharacterSheet() {
                   className={"h-full w-6 text-center rounded-full text-xs"}
                   id="class"
                   type="text"
+                  defaultValue={stats.INSPIRARTION}
                   ref={playerclass}
                 />
-                </div>
+              </div>
               <div className="styledBorder2 flex-grow flex justify-center items-center px-2">
                 <label className=" text-gray-700 text-2xs" htmlFor="username">
                   INSPIRATION
@@ -177,34 +325,53 @@ function CharacterSheet() {
 
           </div>
 
-          {/* Strength */}
-          <div id="stat str flex flex-row">
-            <div className="statNum w-1/3 std-border inline-block text-center">
-              <div className="statTop">
-                <input
-                  className={numInput}
-                  id="class"
-                  type="text"
-                  placeholder="0"
-                  ref={playerStr}
-                  onChange={e => myChangeHandler("str", e.target.value)}
-                />
-              </div>
-              <div>
-                {stats.str}
+          {/* Stats Loop */}
+          {statList.map(stat => {
+            return (
+              <div className={stat + " stat flex flex-row"} key={stat}>
+                <div className="statNum w-16 styledBorder text-center">
+                  <div className="statTop">
+                    <input
+                      className={numInput}
+                      id="class"
+                      type="text"
+                      defaultValue={stats[stat]}
+                      // ref={eval("player"+stat)}
+                      onChange={e => statChangeHandler(stat, e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    {stats[stat + "Mod"]}
+                  </div>
+
+                  <label className="text-gray-700 text-2xs mb-2 w-full text-center font-bold" htmlFor="username">
+                    {stat}
+                  </label>
+                </div>
+                <div className="rolls w-auto text-xxs pl-2">
+                  {stats[stat + "Rolls"].map((roll, index) => {
+                    return (
+                      <div className="flex items-center" key={stat + roll.name}>
+                        <input
+                          type="checkbox"
+                          className="form-checkbox text-green-500 text-2xs"
+                          defaultChecked={roll.proficient}
+                          name={roll.name}
+                          onChange={e => profChangeHandler(stat, index, e.target.checked)}
+                        />
+                        <div className="mx-2">
+                          {roll.score}
+                        </div>
+                        <div className="">
+                          {roll.name}
+                        </div>
+                      </div>)
+                  })}
+                </div>
               </div>
 
-              <label className="inline-block text-gray-700 text-2xs mb-2 w-full text-center font-bold" htmlFor="username">
-                Strength
-              </label>
-            </div>
-            <div className="rolls w-2/3 inline-block text-xs pl-2">
-              <ul>
-                <li>Saving Throw</li>
-                <li>Acrobatics</li>
-              </ul>
-            </div>
-          </div>
+            )
+          })}
 
 
         </div>

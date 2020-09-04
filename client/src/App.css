@@ -26,6 +26,9 @@ Colors
     background:#EF941B;
 }
 
+.text-xxs{
+    font-size: 0.625rem;
+}
 .text-2xs{
     font-size: 0.5rem;
 }
@@ -38,7 +41,7 @@ Colors
 
 
 .std-border{
-    border:3px double #000;
+    border:1px solid #ddd;
 }
 
 #userError{

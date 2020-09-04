@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import Hero from "../components/Hero";
+// import Hero from "../components/Hero";
 import api from "../utils/API";
 import { useParams } from "react-router";
 import Profile from "../components/Profile";

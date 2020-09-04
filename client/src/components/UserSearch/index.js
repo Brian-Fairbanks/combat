@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import API from "../../utils/API";
+import React from "react";
+// import { useRef, useState } from "react";
+// import { Link } from "react-router-dom";
+// import API from "../../utils/API";
 
 function UserSearch(props) {
     return (

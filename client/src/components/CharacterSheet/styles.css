@@ -1,19 +1,29 @@
 .statTop{
-  margin-top:-15px;
+  margin-top:-13px;
 }
 
 .stat{
-  margin-top:10px;
+  margin-top:20px;
+}
+
+.styledBorder{
+  border-image: url(./styledBorder3.svg);
+  border-image-slice: 30% 30% fill;
+  border-image-width: 18px 18px;
 }
 
 .styledBorder1{
   border-image: url(./styledBorder.svg);
   border-image-slice: 35% 35% fill;
-  border-image-width: 14px 10px;
+  border-image-width: 16px 12px;
 }
 
 .styledBorder2{
   border-image: url(./styledBorder2.svg);
   border-image-slice: 35% 35% fill;
-  border-image-width: 14px 10px;
+  border-image-width: 16px 12px;
+}
+
+input{
+  color:#f80 !important;
 }
