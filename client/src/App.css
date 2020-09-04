@@ -39,6 +39,10 @@ Colors
     font-size: 0.25rem;
 }
 
+.leading-2{
+    line-height: .5rem;
+}
+
 
 .std-border{
     border:1px solid #ddd;

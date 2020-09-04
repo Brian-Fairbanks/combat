@@ -26,6 +26,7 @@ function CharacterSheet() {
   const [stats, setStats] = useState({
     proficiency: 5,
     INSPIRARTION: 0,
+    passiveWisdom: 0,
     str: 20,
     dex: 14,
     con: 16,
@@ -34,23 +35,23 @@ function CharacterSheet() {
     cha: 18,
 
     strRolls: [
-      { name: "Saving Throw", score: 0, proficient: false, toolTip: "" },
+      { name: "Saving Throws", score: 0, proficient: false, toolTip: "" },
       { name: "Athletics", score: 0, proficient: false, toolTip: "" },
     ],
 
     dexRolls: [
-      { name: "Saving Throw", score: 0, proficient: false, toolTip: "" },
+      { name: "Saving Throws", score: 0, proficient: false, toolTip: "" },
       { name: "Acrobatics", score: 0, proficient: false, toolTip: "" },
       { name: "Slight of Hand", score: 0, proficient: false, toolTip: "" },
       { name: "Stealth", score: 0, proficient: false, toolTip: "" },
     ],
 
     conRolls: [
-      { name: "Saving Throw", score: 0, proficient: false, toolTip: "" },
+      { name: "Saving Throws", score: 0, proficient: false, toolTip: "" },
     ],
 
     intRolls: [
-      { name: "Saving Throw", score: 0, proficient: false, toolTip: "" },
+      { name: "Saving Throws", score: 0, proficient: false, toolTip: "" },
       { name: "Arcana", score: 0, proficient: false, toolTip: "" },
       { name: "History", score: 0, proficient: false, toolTip: "" },
       { name: "Investigation", score: 0, proficient: false, toolTip: "" },
@@ -59,7 +60,7 @@ function CharacterSheet() {
     ],
 
     wisRolls: [
-      { name: "Saving Throw", score: 0, proficient: true, toolTip: "" },
+      { name: "Saving Throws", score: 0, proficient: true, toolTip: "" },
       { name: "Animal Handling", score: 0, proficient: false, toolTip: "" },
       { name: "Insight", score: 0, proficient: true, toolTip: "" },
       { name: "Medicine", score: 0, proficient: false, toolTip: "" },
@@ -68,7 +69,7 @@ function CharacterSheet() {
     ],
 
     chaRolls: [
-      { name: "Saving Throw", score: 0, proficient: true, toolTip: "" },
+      { name: "Saving Throws", score: 0, proficient: true, toolTip: "" },
       { name: "Deception", score: 0, proficient: false, toolTip: "" },
       { name: "Intimidation", score: 0, proficient: true, toolTip: "" },
       { name: "Performance", score: 0, proficient: false, toolTip: "" },
@@ -89,14 +90,14 @@ function CharacterSheet() {
   }
 
   function baseProfChangeHandler(val) {
-    statUpdate(null, val, { type: "baseProf", val});
+    statUpdate(null, val, { type: "baseProf", val });
   }
 
   // runs once page loads, and stats are populated from the database
   useEffect(() => {
     console.log(stats.proficiency)
     statList.forEach(stat => {
-      statUpdate(stat, stats[stat], { type: "first"});
+      statUpdate(stat, stats[stat], { type: "first" });
     })
   }, [])
 
@@ -113,12 +114,12 @@ function CharacterSheet() {
     if (data.type === "baseProf") {
       console.log("Only chaning proficiency");
       valsToSet = {
-        PROFICIENCY:statVal
+        PROFICIENCY: statVal
       }
       statList.forEach(stat => {
         statMod = Math.floor(stats[stat] / 2) - 5;
         console.log(statMod);
-        valsToSet[stat+"Rolls"] = (updateChecks (stats[stat+"Rolls"], stat, statMod, data));
+        valsToSet[stat + "Rolls"] = (updateChecks(stats[stat + "Rolls"], stat, statMod, data));
       })
 
     }
@@ -128,7 +129,14 @@ function CharacterSheet() {
         [stat]: statVal,
         [stat + "Mod"]: statMod
       }
+
       valsToSet[stat + "Rolls"] = (updateChecks(stats[stat + "Rolls"], stat, statMod, data));
+
+      switch (stat) {
+        case "wis":
+          valsToSet["passiveWisdom"] = 10 + (valsToSet["wisRolls"].find(roll => (roll.name === "Perception")).score)
+      }
+
     }
 
     console.log(valsToSet);
@@ -144,24 +152,27 @@ function CharacterSheet() {
 
   function updateChecks(valsToSet, stat, statMod, data) {
     let profBoost = stats.proficiency;
-    if (data.type == "baseProf") {
+    let score;
+
+    if (data.type === "baseProf") {
       profBoost = data.val;
     }
 
     return valsToSet.map((roll, index) => {
-      // check if a proficiency needs to be changed
       let prof = {};
+      score = roll.proficient ? profBoost + statMod : statMod;
 
+      // check if a skill proficiency needs to be changed
       if (data.type === "prof" && data.index === index) {
         console.log(`Change Proficiency for ${roll.name} to ${data.val}`)
         prof = { proficient: data.val };
+        score = prof.proficient ? profBoost + statMod : statMod;
       }
 
       return (
         {
           ...roll,
-          score: prof.proficient ? profBoost + statMod : statMod,
-          score: roll.proficient ? profBoost + statMod : statMod,
+          score,
           ...prof
         }
       )
@@ -283,7 +294,7 @@ function CharacterSheet() {
 
 
       {/* 2/1 - 3/1 */}
-      <div className="std-border row-span-2">
+      <div className="row-span-2">
         <div className="">
 
           <div className="overflow-hidden mb-4">
@@ -340,26 +351,35 @@ function CharacterSheet() {
                       onChange={e => statChangeHandler(stat, e.target.value)}
                     />
                   </div>
-                  <div>
-                    {stats[stat + "Mod"]}
-                  </div>
+                  <div className = "flex flex-col w-full h-full">
+                    <div className="font-bold text-xl flex-auto flex align-center justify-center items-center">
+                      {stats[stat + "Mod"]}
+                    </div>
 
-                  <label className="text-gray-700 text-2xs mb-2 w-full text-center font-bold" htmlFor="username">
-                    {stat}
-                  </label>
+                    <div className="text-gray-700 text-2xs mb-5 w-full text-center font-bold">
+                      {
+                        stat == "str" ? "Strength" :
+                          stat == "dex" ? "Dexterity" :
+                            stat == "con" ? "Constitution" :
+                              stat == "int" ? "Intelligence" :
+                                stat == "wis" ? "Wisdom" :
+                                  "Charisma"
+                      }
+                    </div>
+                  </div>
                 </div>
                 <div className="rolls w-auto text-xxs pl-2">
                   {stats[stat + "Rolls"].map((roll, index) => {
                     return (
-                      <div className="flex items-center" key={stat + roll.name}>
+                      <div className="flex items-center rollItem leading-2" key={stat + roll.name}>
                         <input
                           type="checkbox"
-                          className="form-checkbox text-green-500 text-2xs"
+                          className="form-checkbox text-2xs h-2 w-2"
                           defaultChecked={roll.proficient}
                           name={roll.name}
                           onChange={e => profChangeHandler(stat, index, e.target.checked)}
                         />
-                        <div className="mx-2">
+                        <div className="w-4 mr-1 text-center">
                           {roll.score}
                         </div>
                         <div className="">
@@ -372,6 +392,20 @@ function CharacterSheet() {
 
             )
           })}
+
+          <div className="overflow-hidden mt-2">
+            {/* Proficiency Bonus */}
+            <div className="flex  my-1 mx-3">
+              <div className="styledBorder1 w-8 flex justify-center items-center p-1 text-gray-700 text-xs">
+                {stats.passiveWisdom}
+              </div>
+              <div className="styledBorder2 flex-grow flex justify-center items-center px-2">
+                <label className=" text-gray-700 text-2xs" htmlFor="username">
+                  PASSIVE WISDOM
+                </label>
+              </div>
+            </div>
+          </div>
 
 
         </div>
@@ -396,6 +430,8 @@ function CharacterSheet() {
       <div className="std-border">
         3/3
       </div>
+
+
     </form>
   );
 }
