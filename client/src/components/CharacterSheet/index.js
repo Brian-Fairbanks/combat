@@ -190,7 +190,7 @@ function CharacterSheet() {
   // Printing sheet for view
   //========================================
   return (
-    <form className="grid grid-cols-3 bg-white shadow-lg rounded p-3 py-5 mb-4 sm:w-2/4 my-4 mx-auto">
+    <form className="grid grid-cols-3 bg-white shadow-lg rounded p-3 py-5 mb-4 md:w-4/5 max-w-3xl my-4 mx-auto">
 
       {/* 1/1 */}
       <div className="std-border my-auto p-2">
@@ -351,7 +351,7 @@ function CharacterSheet() {
                       onChange={e => statChangeHandler(stat, e.target.value)}
                     />
                   </div>
-                  <div className = "flex flex-col w-full h-full">
+                  <div className="flex flex-col w-full h-full">
                     <div className="font-bold text-xl flex-auto flex align-center justify-center items-center">
                       {stats[stat + "Mod"]}
                     </div>
@@ -412,23 +412,199 @@ function CharacterSheet() {
       </div>
 
       {/* 2/2 */}
-      <div className="std-border">
-        2/2
+      <div className="">
+
+        <div className="flex flex-wrap px-2">
+          {/* AC */}
+          <div className="w-1/3 marginFix">
+            <div className="statBorder flex flex-col items-center align-center">
+              <div>
+                {"P H V"}
+              </div>
+              <div className="text-2xs text-center font-bold" >
+                ARMOR CLASS
+              </div>
+            </div>
+          </div>
+
+          {/* Initiative  */}
+          <div className="w-1/3 marginFix">
+            <div className="statBorder flex flex-col items-center align-center">
+              <div>
+                {"P H V"}
+              </div>
+              <div className="text-2xs text-center font-bold" >
+                INITIATIVE
+            </div>
+            </div>
+          </div>
+
+          {/* SPEED */}
+          <div className="w-1/3 marginFix">
+            <div className="statBorder flex flex-col items-center align-center">
+              <div>
+                {"P H V"}
+              </div>
+              <div className="text-2xs text-center font-bold" >
+                SPEED
+            </div>
+            </div>
+          </div>
+
+          {/* HP */}
+          <div className="w-full marginFix">
+            <div className="statBorder flex flex-col items-center align-center">
+              <div>
+                {"P H V"}
+              </div>
+              <div className="text-2xs text-center font-bold" >
+                Current Hit Points
+            </div>
+            </div>
+          </div>
+
+          {/* Temp HP */}
+          <div className="w-full marginFix">
+            <div className="statBorder col-span-3 flex flex-col items-center align-center">
+              <div>
+                {"P H V"}
+              </div>
+              <div className="text-2xs text-center font-bold" >
+                Temporary Hit Points
+              </div>
+            </div>
+          </div>
+
+          {/* Hit Dice */}
+          <div className="w-1/2 marginFix">
+            <div className="statBorder flex flex-col items-center align-center">
+              <div>
+                {"P H V"}
+              </div>
+              <div className="text-2xs text-center font-bold" >
+                Hit Dice
+              </div>
+            </div>
+          </div>
+
+          {/* Death Saves */}
+          <div className="w-1/2 marginFix">
+            <div className="statBorder flex flex-col items-center align-center">
+              <div>
+                {"P H V"}
+              </div>
+              <div className="text-2xs text-center font-bold" >
+                Death Saves
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
 
+
       {/* 2/3 */}
-      <div className="std-border">
-        2/3
+      <div className="">
+        <div className="flex flex-wrap px-2">
+
+          {/* PERSONALITY TRAITS */}
+          <div className="w-full marginFix">
+            <div className="statBorder flex flex-col items-center align-center">
+              <div>
+                {"P H V"}
+              </div>
+              <div className="text-2xs text-center font-bold" >
+                PERSONALITY TRAITS
+              </div>
+            </div>
+          </div>
+
+          {/* IDEALS */}
+          <div className="w-full marginFix">
+            <div className="statBorder flex flex-col items-center align-center">
+              <div>
+                {"P H V"}
+              </div>
+              <div className="text-2xs text-center font-bold" >
+                IDEALS
+              </div>
+            </div>
+          </div>
+
+          {/* Bonds */}
+          <div className="w-full marginFix">
+            <div className="statBorder flex flex-col items-center align-center">
+              <div>
+                {"P H V"}
+              </div>
+              <div className="text-2xs text-center font-bold" >
+                BONDS
+              </div>
+            </div>
+          </div>
+
+          {/* Flaws */}
+          <div className="w-full marginFix">
+            <div className="statBorder flex flex-col items-center align-center">
+              <div>
+                {"P H V"}
+              </div>
+              <div className="text-2xs text-center font-bold" >
+                FLAWS
+              </div>
+            </div>
+          </div>
+
+
+        </div>
       </div>
 
       {/* 3/2 */}
-      <div className="std-border">
-        3/2
+      <div className="px-2">
+        <div className="w-full h-full statBorder flex flex-col items-center align-center">
+          <div className="flex-grow py-2">
+            {"P H V"}
+          </div>
+          <div className="text-2xs text-center font-bold" >
+            ATTACKS AND SPELLCASTING
+            </div>
+        </div>
       </div>
 
       {/* 3/3 */}
-      <div className="std-border">
-        3/3
+      <div className="px-2">
+        <div className="w-full h-full statBorder flex flex-col items-center align-center">
+          <div className="flex-grow py-2">
+            {"P H V"}
+          </div>
+          <div className="text-2xs text-center font-bold" >
+            FEATURES AND TRAITS
+            </div>
+        </div>
+      </div>
+
+      {/* 4/1 */}
+      <div className="py-2">
+        <div className="w-full h-full statBorder flex flex-col items-center align-center">
+          <div className="flex-grow py-2">
+            {"P H V"}
+          </div>
+          <div className="text-2xs text-center font-bold" >
+            OTHER PROFICIENCIES & LANGUAGES
+            </div>
+        </div>
+      </div>
+
+      {/* 4/2 */}
+      <div className="p-2 col-span-2">
+        <div className="w-full h-full statBorder flex flex-col items-center align-center">
+          <div className="flex-grow py-2">
+            {"P H V"}
+          </div>
+          <div className="text-2xs text-center font-bold" >
+            EQUIPMENT
+            </div>
+        </div>
       </div>
 
 

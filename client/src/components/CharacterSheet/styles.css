@@ -6,6 +6,12 @@
   margin-top:20px;
 }
 
+.statBorder{
+  border-image: url(./statborder.svg);
+  border-image-slice: 30% 30% fill;
+  border-image-width: 18px 18px;
+}
+
 .styledBorder{
   border-image: url(./styledBorder3.svg);
   border-image-slice: 30% 30% fill;
@@ -15,13 +21,13 @@
 .styledBorder1{
   border-image: url(./styledBorder.svg);
   border-image-slice: 35% 35% fill;
-  border-image-width: 16px 12px;
+  border-image-width: 18px 18px;
 }
 
 .styledBorder2{
   border-image: url(./styledBorder2.svg);
   border-image-slice: 35% 35% fill;
-  border-image-width: 16px 12px;
+  border-image-width: 18px 18px;
 }
 
 input{
@@ -30,4 +36,8 @@ input{
 
 .rollItem{
   margin-bottom:1px;
+}
+
+.marginFix{
+  padding:2px;
 }
