@@ -8,6 +8,7 @@
 
 .statBorder{
   border-image: url(./statborder.svg);
+  border-image-outset:5px;
   border-image-slice: 30% 30% fill;
   border-image-width: 18px 18px;
 }
@@ -30,8 +31,10 @@
   border-image-width: 18px 18px;
 }
 
-input{
-  color:#f80 !important;
+input, .input{
+  color: rgb(83, 57, 0)!important;
+  text-shadow:0px 0px 10px #ffb048;
+  background: radial-gradient(ellipse , rgba(255,250,230,1) 0%, rgba(255,255,255,1) 95%);
 }
 
 .rollItem{
@@ -39,5 +42,5 @@ input{
 }
 
 .marginFix{
-  padding:2px;
+  padding:7px;
 }

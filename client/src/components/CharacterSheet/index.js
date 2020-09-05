@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import TextareaAutosize from 'react-textarea-autosize';
 import './styles.css';
 // import { Link } from "react-router-dom";
 // import API from "../../utils/API";
@@ -6,6 +7,7 @@ import './styles.css';
 const vertInput = "shadow appearance-none w-full rounded p-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline";
 // const horInput = "shadow appearance-none w-1/4 rounded p-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block";
 const numInput = "shadow appearance-none w-1/2 rounded p-1 text-gray-700 text-xs leading-tight focus:outline-none focus:shadow-outline text-center";
+const text = "input appearance-none rounded-lg text-gray-700 w-full flex-grow p-1 text-xs leading-tight focus:outline-none focus:shadow-outline ";
 
 const statList = ["str", "dex", "con", "int", "wis", "cha"];
 
@@ -24,9 +26,20 @@ function CharacterSheet() {
   // const [wrongCredentials, setWrongCredentials] = useState(false);
 
   const [stats, setStats] = useState({
+    level:1,
     proficiency: 5,
     INSPIRARTION: 0,
     passiveWisdom: 0,
+    HP:1,
+    tempHP:0,
+    ac:0,
+    initiative:0,
+
+    personality:`You phrase your requests as orders and expect others to obey`,
+    ideals:"in life as in war, the stronger force wins",
+    bonds:"I fight for those who can not fight for themselves (the sea folk)",
+    flaws:"I have little resprct for those who are not a proven warrior",
+
     str: 20,
     dex: 14,
     con: 16,
@@ -89,8 +102,16 @@ function CharacterSheet() {
     statUpdate(stat, stats[stat], { type: "prof", index, val });
   }
 
+  // when the user changes the Proficiency value
   function baseProfChangeHandler(val) {
     statUpdate(null, val, { type: "baseProf", val });
+  }
+
+  function singleChangeHandler(stat, val){
+    setStats((prevState) => ({
+      ...prevState,
+      [stat]:val
+    }));
   }
 
   // runs once page loads, and stats are populated from the database
@@ -135,6 +156,13 @@ function CharacterSheet() {
       switch (stat) {
         case "wis":
           valsToSet["passiveWisdom"] = 10 + (valsToSet["wisRolls"].find(roll => (roll.name === "Perception")).score)
+          break;
+        case "con":
+          valsToSet["HP"] = 10 + (valsToSet.conMod*stats.level);
+          break;
+        case "dex":
+          valsToSet["ac"] = (valsToSet.dexMod);
+          valsToSet["initiative"] = (valsToSet.dexMod);
       }
 
     }
@@ -419,7 +447,7 @@ function CharacterSheet() {
           <div className="w-1/3 marginFix">
             <div className="statBorder flex flex-col items-center align-center">
               <div>
-                {"P H V"}
+                {stats.ac}
               </div>
               <div className="text-2xs text-center font-bold" >
                 ARMOR CLASS
@@ -431,7 +459,7 @@ function CharacterSheet() {
           <div className="w-1/3 marginFix">
             <div className="statBorder flex flex-col items-center align-center">
               <div>
-                {"P H V"}
+              {stats.initiative}
               </div>
               <div className="text-2xs text-center font-bold" >
                 INITIATIVE
@@ -455,7 +483,7 @@ function CharacterSheet() {
           <div className="w-full marginFix">
             <div className="statBorder flex flex-col items-center align-center">
               <div>
-                {"P H V"}
+                {stats.HP}
               </div>
               <div className="text-2xs text-center font-bold" >
                 Current Hit Points
@@ -467,7 +495,7 @@ function CharacterSheet() {
           <div className="w-full marginFix">
             <div className="statBorder col-span-3 flex flex-col items-center align-center">
               <div>
-                {"P H V"}
+                {stats.tempHP}
               </div>
               <div className="text-2xs text-center font-bold" >
                 Temporary Hit Points
@@ -479,7 +507,7 @@ function CharacterSheet() {
           <div className="w-1/2 marginFix">
             <div className="statBorder flex flex-col items-center align-center">
               <div>
-                {"P H V"}
+                {stats.level}
               </div>
               <div className="text-2xs text-center font-bold" >
                 Hit Dice
@@ -509,10 +537,12 @@ function CharacterSheet() {
 
           {/* PERSONALITY TRAITS */}
           <div className="w-full marginFix">
-            <div className="statBorder flex flex-col items-center align-center">
-              <div>
-                {"P H V"}
-              </div>
+            <div className="statBorder flex flex-col items-center align-center w-full">
+              <TextareaAutosize 
+                className={text}
+                defaultValue={stats.personality}
+                onChange={e => singleChangeHandler("personality", e.target.value)}
+              />
               <div className="text-2xs text-center font-bold" >
                 PERSONALITY TRAITS
               </div>
@@ -522,9 +552,11 @@ function CharacterSheet() {
           {/* IDEALS */}
           <div className="w-full marginFix">
             <div className="statBorder flex flex-col items-center align-center">
-              <div>
-                {"P H V"}
-              </div>
+            <TextareaAutosize 
+                className={text}
+                defaultValue={stats.ideals}
+                onChange={e => singleChangeHandler("personality", e.target.value)}
+              />
               <div className="text-2xs text-center font-bold" >
                 IDEALS
               </div>
@@ -534,9 +566,11 @@ function CharacterSheet() {
           {/* Bonds */}
           <div className="w-full marginFix">
             <div className="statBorder flex flex-col items-center align-center">
-              <div>
-                {"P H V"}
-              </div>
+            <TextareaAutosize 
+                className={text}
+                defaultValue={stats.bonds}
+                onChange={e => singleChangeHandler("personality", e.target.value)}
+              />
               <div className="text-2xs text-center font-bold" >
                 BONDS
               </div>
@@ -546,9 +580,11 @@ function CharacterSheet() {
           {/* Flaws */}
           <div className="w-full marginFix">
             <div className="statBorder flex flex-col items-center align-center">
-              <div>
-                {"P H V"}
-              </div>
+            <TextareaAutosize 
+                className={text}
+                defaultValue={stats.flaws}
+                onChange={e => singleChangeHandler("personality", e.target.value)}
+              />
               <div className="text-2xs text-center font-bold" >
                 FLAWS
               </div>
