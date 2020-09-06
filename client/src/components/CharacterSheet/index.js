@@ -27,7 +27,8 @@ function CharacterSheet() {
 
   const [stats, setStats] = useState({
     name:"Belythan",
-    level: 1,
+    level: 12,
+    playerName:"User",
 
     proficiency: 5,
     INSPIRARTION: 0,
@@ -250,18 +251,22 @@ function CharacterSheet() {
   // Printing sheet for view
   //========================================
   return (
-    <form className="grid grid-cols-3 bg-white shadow-lg rounded p-3 py-5 mb-4 md:w-4/5 max-w-3xl my-4 mx-auto">
+    <form className="grid grid-cols-3 bg-white shadow-lg rounded p-3 pb-5 pt-8 mb-4 md:w-3xl max-w-3xl min-w-3xl my-4 mx-auto">
 
       {/* 1/1 */}
-      <div className="std-border my-auto p-2">
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline font-bold"
-          id="username"
-          type="text"
-          value = {stats.name}
-          onChange={e => singleChangeHandler("name", e.target.value)}
-        />
-        <label className="block text-gray-700 text-2xs mb-2" htmlFor="username">
+      <div className="my-auto relative">
+        <div className="nameDragonHead"/>
+        <div className="nameDragonTail"/>
+        <div className="nameBorder my-auto p-2">
+          <input
+            className="appearance-none rounded w-full py-1 mb-2 px-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline font-bold"
+            id="username"
+            type="text"
+            value = {stats.name}
+            onChange={e => singleChangeHandler("name", e.target.value)}
+          />
+        </div>
+        <label className="block text-gray-700 text-2xs mb-2 ml-5" htmlFor="username">
           CHARACTER NAME
         </label>
       </div>
@@ -285,7 +290,8 @@ function CharacterSheet() {
             className={vertInput}
             id="class"
             type="text"
-            ref={playerclass}
+            value = {stats.level}
+            onChange={e => singleChangeHandler("level", e.target.value)}
           />
           <label className="block text-gray-700 text-2xs mb-2" htmlFor="username">
             LEVEL
@@ -309,7 +315,8 @@ function CharacterSheet() {
             className={vertInput}
             id="class"
             type="text"
-            ref={playerclass}
+            value = {stats.playerName}
+            onChange={e => singleChangeHandler("playerName", e.target.value)}
           />
           <label className="block text-gray-700 text-2xs mb-2" htmlFor="username">
             PLAYER NAME
@@ -355,12 +362,12 @@ function CharacterSheet() {
 
 
       {/* 2/1 - 3/1 */}
-      <div className="row-span-2">
+      <div className="row-span-4 sm:row-span-2">
         <div className="">
 
           <div className="overflow-hidden mb-4">
             {/* Proficiency Bonus */}
-            <div className="flex  my-1 mx-3">
+            <div className="flex  my-1 mx-0 sm:mx-3">
               <div className="styledBorder1 w-8 flex justify-center items-center p-1">
                 <input
                   className={"h-full w-6 text-center rounded-full text-xs"}
@@ -371,14 +378,14 @@ function CharacterSheet() {
                 />
               </div>
               <div className="styledBorder2 flex-grow flex justify-center items-center px-2">
-                <label className=" text-gray-700 text-2xs" htmlFor="username">
+                <label className=" text-gray-700 text-2xs text-center" htmlFor="username">
                   PROFICIENCY BONUS
                 </label>
               </div>
             </div>
 
             {/* INSPIRATION */}
-            <div className="flex my-1 mx-3">
+            <div className="flex  my-1 mx-0 sm:mx-3">
               <div className="styledBorder1 w-8 flex justify-center items-center p-1">
                 <input
                   className={"h-full w-6 text-center rounded-full text-xs"}
@@ -400,8 +407,8 @@ function CharacterSheet() {
           {/* Stats Loop */}
           {statList.map(stat => {
             return (
-              <div className={stat + " stat flex flex-row"} key={stat}>
-                <div className="statNum w-16 styledBorder text-center">
+              <div className={stat + " stat flex flex-col sm:flex-row"} key={stat}>
+                <div className="statNum w-2/3 sm:w-16 styledBorder text-center mx-auto sm:mx-0">
                   <div className="statTop">
                     <input
                       className={numInput}
@@ -417,7 +424,7 @@ function CharacterSheet() {
                       {stats[stat + "Mod"]}
                     </div>
 
-                    <div className="text-gray-700 text-2xs mb-5 w-full text-center font-bold">
+                    <div className="text-gray-700 text-2xs mb-1 sm:mb-4 w-full text-center font-bold">
                       {
                         stat == "str" ? "Strength" :
                           stat == "dex" ? "Dexterity" :
@@ -432,10 +439,10 @@ function CharacterSheet() {
                 <div className="rolls w-auto text-xxs pl-2">
                   {stats[stat + "Rolls"].map((roll, index) => {
                     return (
-                      <div className="flex items-center rollItem leading-2" key={stat + roll.name}>
+                      <div className="flex items-center rollItem leading-2 my-1 sm:m-0" key={stat + roll.name}>
                         <input
                           type="checkbox"
-                          className="form-checkbox text-2xs h-2 w-2"
+                          className="form-checkbox text-2xs"
                           defaultChecked={roll.proficient}
                           name={roll.name}
                           onChange={e => profChangeHandler(stat, index, e.target.checked)}
@@ -461,7 +468,7 @@ function CharacterSheet() {
                 {stats.passiveWisdom}
               </div>
               <div className="styledBorder2 flex-grow flex justify-center items-center px-2">
-                <label className=" text-gray-700 text-2xs" htmlFor="username">
+                <label className=" text-gray-700 text-2xs text-center" htmlFor="username">
                   PASSIVE WISDOM
                 </label>
               </div>
@@ -473,7 +480,7 @@ function CharacterSheet() {
       </div>
 
       {/* 2/2 */}
-      <div className="">
+      <div className="col-span-2 sm:col-span-1">
 
         <div className="flex flex-wrap px-2">
           {/* AC */}
@@ -560,7 +567,7 @@ function CharacterSheet() {
                     return (
                       <input
                         type="checkbox"
-                        className="form-checkbox text-2xs h-2 w-2 mx-1 text-indigo-600"
+                        className="form-checkbox text-2xs h-2 w-2 checkMargin"
                         key={`deathSaves.saves.${index}`}
                         checked={stats.deathSaves.saves[index]}
                         name={`deathSaves.saves.${index}`}
@@ -577,7 +584,7 @@ function CharacterSheet() {
                     return (
                       <input
                         type="checkbox"
-                        className="form-checkbox text-2xs h-2 w-2 mx-1"
+                        className="form-checkbox text-2xs h-2 w-2 checkMargin"
                         key={`deathSaves.fails.${index}`}
                         checked={stats.deathSaves.fails[index]}
                         name={`deathSaves.fails.${index}`}
@@ -599,7 +606,7 @@ function CharacterSheet() {
 
 
       {/* 2/3 */}
-      <div className="">
+      <div className="col-span-2 sm:col-span-1">
         <div className="flex flex-wrap px-2">
 
           {/* PERSONALITY TRAITS */}
@@ -663,7 +670,7 @@ function CharacterSheet() {
       </div>
 
       {/* 3/2 */}
-      <div className="px-2">
+      <div className="py-2 px-0 sm:py-0 sm:px-2 col-span-2 sm:col-span-1">
         <div className="w-full h-full statBorder flex flex-col items-center align-center">
           <div className="flex-grow py-2">
             {"P H V"}
@@ -675,7 +682,7 @@ function CharacterSheet() {
       </div>
 
       {/* 3/3 */}
-      <div className="px-2">
+      <div className="py-2 px-0 sm:py-0 sm:px-2 col-span-2 sm:col-span-1">
         <div className="w-full h-full statBorder flex flex-col items-center align-center">
           <div className="flex-grow py-2">
             {"P H V"}
@@ -687,7 +694,7 @@ function CharacterSheet() {
       </div>
 
       {/* 4/1 */}
-      <div className="py-2">
+      <div className="py-2 ">
         <div className="w-full h-full statBorder flex flex-col items-center align-center">
           <div className="flex-grow py-2">
             {"P H V"}

@@ -19,6 +19,13 @@
   border-image-width: 18px 18px;
 }
 
+.nameBorder{
+  border-image: url(./styledBorder3.svg);
+  border-image-slice: 30% 30% fill;
+  border-image-width: 18px 0px;
+  z-index:2;
+}
+
 .styledBorder1{
   border-image: url(./styledBorder.svg);
   border-image-slice: 35% 35% fill;
@@ -31,6 +38,25 @@
   border-image-width: 18px 18px;
 }
 
+.nameDragonHead{
+  position:absolute;
+  margin-top:-49px;
+  width:100px;
+  height:60px;
+  background-image:url(./dragonHead.svg);
+  background-size: contain;
+}
+
+.nameDragonTail{
+  position:absolute;
+  right:10px;
+  bottom:9px;
+  width:94px;
+  height:35px;
+  background-image:url(./dragonTail.svg);
+  background-size: contain;
+}
+
 input, .input{
   color: rgb(83, 57, 0)!important;
   text-shadow:0px 0px 10px #ffb048;
@@ -38,6 +64,8 @@ input, .input{
 }
 
 .form-checkbox{
+  height:8px;
+  width:8px;
   box-shadow:0px 0px 3px #ffb048;
 }
 
@@ -47,4 +75,8 @@ input, .input{
 
 .marginFix{
   padding:7px;
+}
+
+.checkMargin{
+  margin-left:3px;
 }
