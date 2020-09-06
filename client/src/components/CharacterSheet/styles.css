@@ -37,6 +37,10 @@ input, .input{
   background: radial-gradient(ellipse , rgba(255,250,230,1) 0%, rgba(255,255,255,1) 95%);
 }
 
+.form-checkbox{
+  box-shadow:0px 0px 3px #ffb048;
+}
+
 .rollItem{
   margin-bottom:1px;
 }

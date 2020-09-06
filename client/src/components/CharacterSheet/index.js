@@ -26,7 +26,9 @@ function CharacterSheet() {
   // const [wrongCredentials, setWrongCredentials] = useState(false);
 
   const [stats, setStats] = useState({
+    name:"Belythan",
     level: 1,
+
     proficiency: 5,
     INSPIRARTION: 0,
     passiveWisdom: 0,
@@ -137,6 +139,9 @@ function CharacterSheet() {
     if(!stats.deathSaves.fails.includes(false)){
       dead();
     }
+    if(!stats.deathSaves.saves.includes(false)){
+      ressurect();
+    }
   }, [stats])
 
 
@@ -232,6 +237,7 @@ function CharacterSheet() {
 
   function ressurect(){
     setStats({...stats, deathSaves: { saves: [false, false, false], fails: [false, false, false] }})
+    alert("Good job, brah.  You live.");
   }
 
   // Exporting Character Sheet
@@ -249,10 +255,11 @@ function CharacterSheet() {
       {/* 1/1 */}
       <div className="std-border my-auto p-2">
         <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline font-bold"
           id="username"
           type="text"
-          ref={usernameRef}
+          value = {stats.name}
+          onChange={e => singleChangeHandler("name", e.target.value)}
         />
         <label className="block text-gray-700 text-2xs mb-2" htmlFor="username">
           CHARACTER NAME
@@ -553,9 +560,9 @@ function CharacterSheet() {
                     return (
                       <input
                         type="checkbox"
-                        className="form-checkbox text-2xs h-2 w-2 mx-1"
+                        className="form-checkbox text-2xs h-2 w-2 mx-1 text-indigo-600"
                         key={`deathSaves.saves.${index}`}
-                        defaultChecked={stats.deathSaves.saves[index]}
+                        checked={stats.deathSaves.saves[index]}
                         name={`deathSaves.saves.${index}`}
                         onChange={e => singleChangeHandler(e.target.name, e.target.checked)}
                       />
