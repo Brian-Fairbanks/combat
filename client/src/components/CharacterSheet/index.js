@@ -26,19 +26,21 @@ function CharacterSheet() {
   // const [wrongCredentials, setWrongCredentials] = useState(false);
 
   const [stats, setStats] = useState({
-    level:1,
+    level: 1,
     proficiency: 5,
     INSPIRARTION: 0,
     passiveWisdom: 0,
-    HP:1,
-    tempHP:0,
-    ac:0,
-    initiative:0,
+    HP: 1,
+    tempHP: 0,
+    ac: 0,
+    initiative: 0,
 
-    personality:`You phrase your requests as orders and expect others to obey`,
-    ideals:"in life as in war, the stronger force wins",
-    bonds:"I fight for those who can not fight for themselves (the sea folk)",
-    flaws:"I have little resprct for those who are not a proven warrior",
+    deathSaves: { saves: [false, false, false], fails: [false, false, false] },
+
+    personality: `You phrase your requests as orders and expect others to obey`,
+    ideals: "in life as in war, the stronger force wins",
+    bonds: "I fight for those who can not fight for themselves (the sea folk)",
+    flaws: "I have little resprct for those who are not a proven warrior",
 
     str: 20,
     dex: 14,
@@ -88,9 +90,8 @@ function CharacterSheet() {
       { name: "Performance", score: 0, proficient: false, toolTip: "" },
       { name: "Persuasion", score: 0, proficient: true, toolTip: "" },
     ]
-
-
   });
+
 
   // any time a user manually changes a stat value
   function statChangeHandler(stat, val) {
@@ -107,10 +108,19 @@ function CharacterSheet() {
     statUpdate(null, val, { type: "baseProf", val });
   }
 
-  function singleChangeHandler(stat, val){
+  // Changing a single stat, which will not effect anythig else
+  function singleChangeHandler(stat, val) {
+    let temp = { [stat]: val, }
+    // handle deathsaves
+    if (stat.includes("deathSaves")) {
+      let data = stat.split(".");
+      console.log(data[1]);
+      temp = { deathSaves: stats.deathSaves };
+      temp.deathSaves[data[1]][data[2]] = val;
+    }
     setStats((prevState) => ({
       ...prevState,
-      [stat]:val
+      ...temp
     }));
   }
 
@@ -121,6 +131,13 @@ function CharacterSheet() {
       statUpdate(stat, stats[stat], { type: "first" });
     })
   }, [])
+
+  // check if you are dead
+  useEffect(() => {
+    if(!stats.deathSaves.fails.includes(false)){
+      dead();
+    }
+  }, [stats])
 
 
   // updates a stat, and modifies all associated numbers
@@ -158,7 +175,7 @@ function CharacterSheet() {
           valsToSet["passiveWisdom"] = 10 + (valsToSet["wisRolls"].find(roll => (roll.name === "Perception")).score)
           break;
         case "con":
-          valsToSet["HP"] = 10 + (valsToSet.conMod*stats.level);
+          valsToSet["HP"] = 10 + (valsToSet.conMod * stats.level);
           break;
         case "dex":
           valsToSet["ac"] = (valsToSet.dexMod);
@@ -207,6 +224,15 @@ function CharacterSheet() {
     });
   }
 
+
+  function dead(){
+    alert("You dead, brah...")
+    ressurect();
+  }
+
+  function ressurect(){
+    setStats({...stats, deathSaves: { saves: [false, false, false], fails: [false, false, false] }})
+  }
 
   // Exporting Character Sheet
   // =======================================
@@ -459,7 +485,7 @@ function CharacterSheet() {
           <div className="w-1/3 marginFix">
             <div className="statBorder flex flex-col items-center align-center">
               <div>
-              {stats.initiative}
+                {stats.initiative}
               </div>
               <div className="text-2xs text-center font-bold" >
                 INITIATIVE
@@ -517,13 +543,47 @@ function CharacterSheet() {
 
           {/* Death Saves */}
           <div className="w-1/2 marginFix">
-            <div className="statBorder flex flex-col items-center align-center">
+            <div className="statBorder flex flex-col items-center align-center text-2xs font-bold text-right">
               <div>
-                {"P H V"}
+                <div>
+                  SUCCESSES
+                {
+                  // saves
+                  stats.deathSaves.saves.map((saveIndex, index) => {
+                    return (
+                      <input
+                        type="checkbox"
+                        className="form-checkbox text-2xs h-2 w-2 mx-1"
+                        key={`deathSaves.saves.${index}`}
+                        defaultChecked={stats.deathSaves.saves[index]}
+                        name={`deathSaves.saves.${index}`}
+                        onChange={e => singleChangeHandler(e.target.name, e.target.checked)}
+                      />
+                    )
+                  })
+                }
+              </div>
+              <div>
+                FAILURES
+                {
+                  stats.deathSaves.saves.map((saveIndex, index) => {
+                    return (
+                      <input
+                        type="checkbox"
+                        className="form-checkbox text-2xs h-2 w-2 mx-1"
+                        key={`deathSaves.fails.${index}`}
+                        checked={stats.deathSaves.fails[index]}
+                        name={`deathSaves.fails.${index}`}
+                        onChange={e => singleChangeHandler(e.target.name, e.target.checked)}
+                      />
+                    )
+                  })
+                }
               </div>
               <div className="text-2xs text-center font-bold" >
                 Death Saves
               </div>
+            </div>
             </div>
 
           </div>
@@ -538,7 +598,7 @@ function CharacterSheet() {
           {/* PERSONALITY TRAITS */}
           <div className="w-full marginFix">
             <div className="statBorder flex flex-col items-center align-center w-full">
-              <TextareaAutosize 
+              <TextareaAutosize
                 className={text}
                 defaultValue={stats.personality}
                 onChange={e => singleChangeHandler("personality", e.target.value)}
@@ -552,10 +612,10 @@ function CharacterSheet() {
           {/* IDEALS */}
           <div className="w-full marginFix">
             <div className="statBorder flex flex-col items-center align-center">
-            <TextareaAutosize 
+              <TextareaAutosize
                 className={text}
                 defaultValue={stats.ideals}
-                onChange={e => singleChangeHandler("personality", e.target.value)}
+                onChange={e => singleChangeHandler("ideals", e.target.value)}
               />
               <div className="text-2xs text-center font-bold" >
                 IDEALS
@@ -566,10 +626,10 @@ function CharacterSheet() {
           {/* Bonds */}
           <div className="w-full marginFix">
             <div className="statBorder flex flex-col items-center align-center">
-            <TextareaAutosize 
+              <TextareaAutosize
                 className={text}
                 defaultValue={stats.bonds}
-                onChange={e => singleChangeHandler("personality", e.target.value)}
+                onChange={e => singleChangeHandler("bonds", e.target.value)}
               />
               <div className="text-2xs text-center font-bold" >
                 BONDS
@@ -580,10 +640,10 @@ function CharacterSheet() {
           {/* Flaws */}
           <div className="w-full marginFix">
             <div className="statBorder flex flex-col items-center align-center">
-            <TextareaAutosize 
+              <TextareaAutosize
                 className={text}
                 defaultValue={stats.flaws}
-                onChange={e => singleChangeHandler("personality", e.target.value)}
+                onChange={e => singleChangeHandler("flaws", e.target.value)}
               />
               <div className="text-2xs text-center font-bold" >
                 FLAWS
