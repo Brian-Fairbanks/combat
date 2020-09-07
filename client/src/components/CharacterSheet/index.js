@@ -4,7 +4,7 @@ import './styles.css';
 // import { Link } from "react-router-dom";
 // import API from "../../utils/API";
 
-const vertInput = "shadow appearance-none w-full rounded p-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline";
+const vertInput = "shadow appearance-none w-full rounded p-1 text-gray-700 text-xs leading-tight focus:outline-none focus:shadow-outline";
 // const horInput = "shadow appearance-none w-1/4 rounded p-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block";
 const numInput = "shadow appearance-none w-1/2 rounded p-1 text-gray-700 text-xs leading-tight focus:outline-none focus:shadow-outline text-center";
 const text = "input appearance-none rounded-lg text-gray-700 w-full flex-grow p-1 text-xs leading-tight focus:outline-none focus:shadow-outline ";
@@ -13,17 +13,7 @@ const statList = ["str", "dex", "con", "int", "wis", "cha"];
 
 function CharacterSheet() {
 
-  const usernameRef = useRef(0);
   const playerclass = useRef(0);
-  // const playerStr = useRef(0);
-  // const playerDex = useRef(0);
-  // const playerCon = useRef(0);
-  // const playerInt = useRef(0);
-  // const playerWis = useRef(0);
-  // const playerCha = useRef(0);
-
-  // const [missingField, setMissingField] = useState(false);
-  // const [wrongCredentials, setWrongCredentials] = useState(false);
 
   const [stats, setStats] = useState({
     name:"Belythan",
@@ -186,6 +176,9 @@ function CharacterSheet() {
         case "dex":
           valsToSet["ac"] = (valsToSet.dexMod);
           valsToSet["initiative"] = (valsToSet.dexMod);
+          break;
+        default:
+          break;
       }
 
     }
@@ -266,7 +259,7 @@ function CharacterSheet() {
             onChange={e => singleChangeHandler("name", e.target.value)}
           />
         </div>
-        <label className="block text-gray-700 text-2xs mb-2 ml-5" htmlFor="username">
+        <label className="block text-gray-700 text-2xs mb-2 ml-5 coverFix" htmlFor="username">
           CHARACTER NAME
         </label>
       </div>
@@ -426,17 +419,17 @@ function CharacterSheet() {
 
                     <div className="text-gray-700 text-2xs mb-1 sm:mb-4 w-full text-center font-bold">
                       {
-                        stat == "str" ? "Strength" :
-                          stat == "dex" ? "Dexterity" :
-                            stat == "con" ? "Constitution" :
-                              stat == "int" ? "Intelligence" :
-                                stat == "wis" ? "Wisdom" :
+                        stat === "str" ? "Strength" :
+                          stat === "dex" ? "Dexterity" :
+                            stat === "con" ? "Constitution" :
+                              stat === "int" ? "Intelligence" :
+                                stat === "wis" ? "Wisdom" :
                                   "Charisma"
                       }
                     </div>
                   </div>
                 </div>
-                <div className="rolls w-auto text-xxs pl-2">
+                <div className="rolls w-auto text-xxs pl-2  border-black sm:border-t pt-4 sm:pt-2">
                   {stats[stat + "Rolls"].map((roll, index) => {
                     return (
                       <div className="flex items-center rollItem leading-2 my-1 sm:m-0" key={stat + roll.name}>
