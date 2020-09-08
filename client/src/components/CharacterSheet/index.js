@@ -16,7 +16,7 @@ function CharacterSheet() {
 
   const playerclass = useRef(0);
 
-  const [modal, setModal] = useState(true);
+  const [modal, setModal] = useState(false);
 
   const [stats, setStats] = useState({
     name:"Belythan",
@@ -191,8 +191,6 @@ function CharacterSheet() {
 
     }
 
-    console.log(valsToSet);
-
     setStats((prevState) => ({
       ...prevState,
       ...valsToSet
@@ -201,6 +199,27 @@ function CharacterSheet() {
 
   // Helpers for StatUpdate
   //=================================
+
+  function increaseStatFromModal(stat, val){
+    alert("Adding Stat");
+
+    switch(stat){
+      case "hp":
+        let healthFromRolls = 0;
+
+        let hpList = stats.healthRolls;
+        hpList[hpList.length] = val;
+        
+        hpList.forEach(roll => {
+          healthFromRolls+= roll;
+        })
+        let HP = healthFromRolls + (stats.conMod * stats.level);
+        setStats({...stats, healthRolls:hpList, HP});
+        break;
+      default:
+        break;
+    }
+  }
 
   function updateChecks(valsToSet, stat, statMod, data) {
     let profBoost = stats.proficiency;
@@ -525,7 +544,20 @@ function CharacterSheet() {
 
           {/* HP */}
           <div className="w-full marginFix">
-            <div className="statBorder flex flex-col items-center align-center">
+            <div className="statBorder flex flex-col items-center align-center relative">
+
+              {/* alert to roll for additional health */}
+              {stats.healthRolls.length < stats.level?
+                <div
+                  className="statChange alert"
+                  onClick={() => {increaseStatFromModal("hp", 10)}}
+                >
+                  !
+                </div>
+                :
+                  ""
+              }
+
               <div>
                 {stats.HP}
               </div>
