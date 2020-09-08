@@ -26,7 +26,8 @@ function CharacterSheet() {
     proficiency: 5,
     INSPIRARTION: 0,
     passiveWisdom: 0,
-    HP: 0,
+    curHP:1,
+    maxHP: 0,
     healthRolls:[],
     tempHP: 0,
     ac: 0,
@@ -179,7 +180,7 @@ function CharacterSheet() {
           stats.healthRolls.forEach(roll => {
             healthFromRolls+= roll;
           })
-          valsToSet["HP"] = healthFromRolls + (valsToSet.conMod * stats.level);
+          valsToSet["maxHP"] = healthFromRolls + (valsToSet.conMod * stats.level);
           break;
         case "dex":
           valsToSet["ac"] = (valsToSet.dexMod);
@@ -214,8 +215,12 @@ function CharacterSheet() {
           healthFromRolls+= roll;
         })
         let HP = healthFromRolls + (stats.conMod * stats.level);
-        setStats({...stats, healthRolls:hpList, HP});
+        setStats({...stats, healthRolls:hpList, maxHP: HP});
         break;
+        case "curHP":
+          setStats({...stats, curHP: stats.curHP+val});
+        case "tempHP":
+          setStats({...stats, tempHP: stats.tempHP+val});
       default:
         break;
     }
@@ -559,7 +564,9 @@ function CharacterSheet() {
               }
 
               <div>
-                {stats.HP}
+                <img className = "inline-block mr-3" width="16px" height="auto" src={require('./attack.png')} onClick={() => {increaseStatFromModal("curHP", -10)}} />
+                {`${stats.curHP} / ${stats.maxHP}`}
+                <img className = "inline-block ml-3" width="16px" height="auto" src={require('./heal.png')} onClick={() => {increaseStatFromModal("curHP", 10)}} />
               </div>
               <div className="text-2xs text-center font-bold" >
                 Current Hit Points
@@ -571,7 +578,9 @@ function CharacterSheet() {
           <div className="w-full marginFix">
             <div className="statBorder col-span-3 flex flex-col items-center align-center">
               <div>
+              <img className = "inline-block mr-3" width="16px" height="auto" src={require('./attack.png')} onClick={() => {increaseStatFromModal("tempHP", -10)}} />
                 {stats.tempHP}
+                <img className = "inline-block ml-3" width="16px" height="auto" src={require('./heal.png')} onClick={() => {increaseStatFromModal("tempHP", 10)}} />
               </div>
               <div className="text-2xs text-center font-bold" >
                 Temporary Hit Points
