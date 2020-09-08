@@ -219,6 +219,7 @@ function CharacterSheet() {
         break;
         case "curHP":
           setStats({...stats, curHP: stats.curHP+val});
+          break;
         case "tempHP":
           setStats({...stats, tempHP: stats.tempHP+val});
       default:
