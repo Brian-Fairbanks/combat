@@ -1,0 +1,36 @@
+.modal{
+  position:fixed;
+  top:0px;
+  left:0px;
+  background:rgba(204,204,204,.5);
+  z-index:255;
+  width:100vw;
+  height:100vh;
+}
+
+.closeButton{
+  position:absolute;
+  top:0px;
+  right:0px;
+  border:2px solid white;
+  border-radius:999px;
+  color:white;
+  font-weight:900;
+  background:#600;
+  text-align:center;
+  width:22px;
+  height:22px;
+  font-size:12px;
+  margin-top:-7px;
+  margin-right:-7px;
+  box-shadow:0px 0px 10px #555;
+  text-shadow:-1px -1px 0px black;
+  cursor:pointer;
+}
+
+.closeButton:hover{
+  background:#A00;
+  box-shadow:0px 0px 10px #855;
+  border-color:#fdd;
+  text-shadow:0px 0px 2px #fdd;
+}

@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import Modal from "../Modal";
 import TextareaAutosize from 'react-textarea-autosize';
 import './styles.css';
 // import { Link } from "react-router-dom";
@@ -15,6 +16,8 @@ function CharacterSheet() {
 
   const playerclass = useRef(0);
 
+  const [modal, setModal] = useState(true);
+
   const [stats, setStats] = useState({
     name:"Belythan",
     level: 12,
@@ -23,7 +26,8 @@ function CharacterSheet() {
     proficiency: 5,
     INSPIRARTION: 0,
     passiveWisdom: 0,
-    HP: 1,
+    HP: 0,
+    healthRolls:[],
     tempHP: 0,
     ac: 0,
     initiative: 0,
@@ -171,7 +175,11 @@ function CharacterSheet() {
           valsToSet["passiveWisdom"] = 10 + (valsToSet["wisRolls"].find(roll => (roll.name === "Perception")).score)
           break;
         case "con":
-          valsToSet["HP"] = 10 + (valsToSet.conMod * stats.level);
+          let healthFromRolls=0;
+          stats.healthRolls.forEach(roll => {
+            healthFromRolls+= roll;
+          })
+          valsToSet["HP"] = healthFromRolls + (valsToSet.conMod * stats.level);
           break;
         case "dex":
           valsToSet["ac"] = (valsToSet.dexMod);
@@ -241,9 +249,12 @@ function CharacterSheet() {
   }
 
 
-  // Printing sheet for view
-  //========================================
+  //  =======================================
+  //  ||  Printing sheet for view
+  //  ========================================
+
   return (
+    <div>
     <form className="grid grid-cols-3 bg-white shadow-lg rounded p-3 pb-5 pt-8 mb-4 md:w-3xl max-w-3xl min-w-3xl my-4 mx-auto">
 
       {/* 1/1 */}
@@ -712,6 +723,10 @@ function CharacterSheet() {
 
 
     </form>
+
+    {/* Modals */}
+    <Modal visible={modal} close={() => {setModal(false)}}></Modal>
+    </div>
   );
 }
 
