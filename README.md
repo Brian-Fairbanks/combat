@@ -3,7 +3,17 @@
 
 ## Description
 <img src="https://raw.githubusercontent.com/Brian-Fairbanks/DiceRollerz/master/client/public/icons/DRZ.png" align="right" alt="Dice Rollerz Logo by Brian Fairbanks" width="150" height="150">
-This untitled project is designed to facilitate D&D online gameplay, implementing socket.io to allow multiple users to control their individual game tokens in an online battle simulation.
+This untitled project is designed to facilitate D&D online gameplay, including
+
+### Character Sheet - in progress
+Creation of multiple character sheets per player, with:
+- Automatic updating of the character sheet
+- Homebrew Class Creation/selection
+- Homebrew Item creation/selection
+- Homebrew Feat/Trait creation/selection
+
+### Battle Map - Planning Stages
+implementing socket.io to allow multiple users to control their individual game tokens in an online battle simulation
 
 
 ## Table of Contents
