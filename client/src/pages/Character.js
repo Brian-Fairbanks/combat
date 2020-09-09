@@ -11,5 +11,4 @@ function Character() {
     );
 }
 
-export default function Character() {
-  ;
+export default Character;
