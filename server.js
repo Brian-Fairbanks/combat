@@ -11,6 +11,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3004;
 
+require("dotenv").config();
+
 // middleware
 app.use(express.urlencoded( { extended: true }));
 app.use(express.json());
@@ -25,14 +27,14 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // use sessions to keep track of user
-app.use(session({ secret: "combat", resave: true, saveUninitialized: true}));
+app.use(session({ secret: process.env.sessionSecret, resave: true, saveUninitialized: true}));
 app.use(passport.initialize());
 app.use(passport.session());
 // routes
 app.use(routes);
 
 // connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/combat", {
+mongoose.connect(process.env.mongoAtlasURI, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
   useFindAndModify: false
