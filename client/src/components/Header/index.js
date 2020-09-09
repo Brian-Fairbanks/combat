@@ -3,6 +3,11 @@ import { Link } from "react-router-dom";
 import UserContext from "../../utils/userContext";
 import './header.css';
 
+
+// Refer to this to auto collapse menu after clicking off it
+// https://medium.com/@pitipatdop/little-neat-trick-to-capture-click-outside-with-react-hook-ba77c37c7e82
+
+
 function Header() {
 
     const { user } = useContext(UserContext);

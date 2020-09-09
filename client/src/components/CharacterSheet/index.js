@@ -50,7 +50,7 @@ function CharacterSheet() {
     passiveWisdom: 0,
     curHP: 1,
     maxHP: 0,
-    healthRolls: [],
+    healthRolls: [10],
     tempHP: 0,
     ac: 0,
     initiative: 0,
@@ -201,7 +201,7 @@ function CharacterSheet() {
           stats.healthRolls.forEach(roll => {
             healthFromRolls += roll;
           })
-          valsToSet["maxHP"] = healthFromRolls + (valsToSet.conMod * stats.level);
+          valsToSet["maxHP"] = healthFromRolls + ((valsToSet.conMod>0?valsToSet.conMod:0 * stats.level)* stats.level);
           break;
         case "dex":
           valsToSet["ac"] = (valsToSet.dexMod);
@@ -262,7 +262,7 @@ function CharacterSheet() {
         hpList.forEach(roll => {
           healthFromRolls+= roll;
         })
-        let HP = healthFromRolls + (stats.conMod * stats.level);
+        let HP = healthFromRolls + (stats.conMod>0?stats.conMod:0 * stats.level);
         setStats({...stats, healthRolls:hpList, maxHP: HP});
         break;
         case "curHP":
