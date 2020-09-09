@@ -1,14 +1,20 @@
 
 
 #nav-content{
-  max-height:0px;
   overflow:hidden;
-  /* -webkit-transition: all .3s cubic-bezier(.36,1.03,.85,.83);
-  -moz-transition: all .3s cubic-bezier(.36,1.03,.85,.83);
-  -o-transition: all .3s cubic-bezier(.36,1.03,.85,.83); */
+  -webkit-transition: all .3s cubic-bezier(.49,1.24,.51,.55);
+  -moz-transition: all .3s cubic-bezier(.49,1.24,.51,.55);
+  -o-transition: all .3s cubic-bezier(.49,1.24,.51,.55);
   transition: all .3s cubic-bezier(.49,1.24,.51,.55);
 }
 
 #nav-content.slide{
   max-height:160px;
+}
+
+
+@media only screen and (max-width: 640px) {
+  #nav-content{
+    max-height:0px;
+  }
 }
