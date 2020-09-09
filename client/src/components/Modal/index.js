@@ -16,7 +16,7 @@ function Modal(props) {
           <div className="modal">
           </div>
             
-          <div className="bg-white shadow-lg rounded p-1 absolute modalInput" style={{top:props.loc.y+"px", [props.loc.side]:props.loc.x+"px"}} >
+          <div className="bg-white shadow-lg rounded p-1 absolute modalInput" style={{top:props.loc.y-100+"px", [props.loc.side]:props.loc.x-4+"px"}} >
             <button style={{[props.loc.side]:-7+"px"}} className="closeButton" onClick={props.close} >X</button>
             {props.content}
           </div>

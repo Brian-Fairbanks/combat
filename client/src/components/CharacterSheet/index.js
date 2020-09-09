@@ -17,24 +17,13 @@ function CharacterSheet() {
 
   const playerclass = useRef(0);
 
-  const windowSize = useWindowSize();
-
-
-  // Modal Setup
-  // =================================
-  const modalRef = useRef(0);
-  const mouseRef = useRef({x:0, y:0, side:"right"});
-
-  const [modal, setModal] = useState(false);
-  const [modalContent, setModalContent] = useState("");
-
-  // set reference for modal location each time you click
-  function setLoc(e) {
-    console.log(e);
-    console.log( "x:",e.pageX-windowRef.current>100?e.pageX:windowRef.current-e.pageX, "y:", e.pageY, "side:", e.pageX-windowRef.current>100?"left":"right" );
-    mouseRef.current = { x: windowRef.current-e.pageX>100?e.pageX:windowRef.current-e.pageX, y: e.pageY, side:windowRef.current-e.pageX>100?"left":"right" };
-    console.log(mouseRef.current);
-  }
+  // runs once page loads, and stats are populated from the database
+  useEffect(() => {
+    console.log(stats.proficiency)
+    statList.forEach(stat => {
+      statUpdate(stat, stats[stat], { type: "first" });
+    })
+  }, [])
 
 
   // Stats Setup
@@ -42,7 +31,7 @@ function CharacterSheet() {
 
   const [stats, setStats] = useState({
     name: "Belythan",
-    level: 12,
+    level: 1,
     playerName: "User",
 
     proficiency: 5,
@@ -56,6 +45,7 @@ function CharacterSheet() {
     initiative: 0,
 
     deathSaves: { saves: [false, false, false], fails: [false, false, false] },
+    dead:false,
 
     personality: `You phrase your requests as orders and expect others to obey`,
     ideals: "in life as in war, the stronger force wins",
@@ -143,24 +133,6 @@ function CharacterSheet() {
     }));
   }
 
-  // runs once page loads, and stats are populated from the database
-  useEffect(() => {
-    console.log(stats.proficiency)
-    statList.forEach(stat => {
-      statUpdate(stat, stats[stat], { type: "first" });
-    })
-  }, [])
-
-  // check if you are dead
-  useEffect(() => {
-    if (!stats.deathSaves.fails.includes(false)) {
-      dead();
-    }
-    if (!stats.deathSaves.saves.includes(false)) {
-      ressurect();
-    }
-  }, [stats])
-
 
   // updates a stat, and modifies all associated numbers
   //=======================================================
@@ -201,7 +173,7 @@ function CharacterSheet() {
           stats.healthRolls.forEach(roll => {
             healthFromRolls += roll;
           })
-          valsToSet["maxHP"] = healthFromRolls + ((valsToSet.conMod>0?valsToSet.conMod:0 * stats.level)* stats.level);
+          valsToSet["maxHP"] = healthFromRolls + ((valsToSet.conMod * stats.level)* stats.level);
           break;
         case "dex":
           valsToSet["ac"] = (valsToSet.dexMod);
@@ -222,35 +194,6 @@ function CharacterSheet() {
   // Helpers for StatUpdate
   //=================================
 
-  const windowRef = useRef(0);
-  useEffect(()=>{
-    windowRef.current=windowSize
-  },[windowSize])
-
-  function modaling(stat, val, message="") {
-    setModalContent(
-      <form 
-        className = "flex flex-col justify-center items-center align-center"
-        onSubmit={(e) => {e.preventDefault(); increaseStatFromModal(stat, val*parseInt(modalRef.current.value)); setModal(false); console.log(modalRef.current.value)}}
-      >
-        {message?<div>{message}</div>:""}
-        <input
-          type='number'
-          inputMode='numeric'
-          pattern="[0-9]"
-          id="modalInput"
-          className={"mb-1 border-2 border-black"+numInput}
-          ref={modalRef}
-        />
-        <button 
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >Submit</button >
-      </form>
-    );
-    setModal(true); 
-  }
-
   function increaseStatFromModal(stat, val){
     switch(stat){
       case "hp":
@@ -262,11 +205,13 @@ function CharacterSheet() {
         hpList.forEach(roll => {
           healthFromRolls+= roll;
         })
-        let HP = healthFromRolls + (stats.conMod>0?stats.conMod:0 * stats.level);
+        let HP = healthFromRolls + (stats.conMod * stats.level);
         setStats({...stats, healthRolls:hpList, maxHP: HP});
         break;
         case "curHP":
-          setStats({...stats, curHP: stats.curHP+val});
+          let setHP = stats.curHP+val;
+          if (setHP > stats.maxHP){setHP = stats.maxHP}
+          setStats({...stats, curHP:setHP});
           break;
         case "tempHP":
           setStats({...stats, tempHP: stats.tempHP+val,  curHP: stats.curHP+val});
@@ -306,14 +251,76 @@ function CharacterSheet() {
   }
 
 
+
+    // Modal Setup
+  // =================================
+  const windowSize = useWindowSize();
+  const modalRef = useRef(0);
+  const mouseRef = useRef({x:0, y:0, side:"right"});
+
+  const [modal, setModal] = useState(false);
+  const [modalContent, setModalContent] = useState("");
+
+  // set reference for modal location each time you click
+  function setLoc(e) {
+    console.log(e);
+    console.log( "x:",e.pageX-windowRef.current>100?e.pageX:windowRef.current-e.pageX, "y:", e.pageY, "side:", e.pageX-windowRef.current>100?"left":"right" );
+    mouseRef.current = { x: windowRef.current-e.pageX>100?e.pageX:windowRef.current-e.pageX, y: e.pageY, side:windowRef.current-e.pageX>100?"left":"right" };
+    console.log(mouseRef.current);
+  }
+
+  const windowRef = useRef(0);
+  useEffect(()=>{
+    windowRef.current=windowSize
+  },[windowSize])
+
+  function modaling(stat, val, message="") {
+    setModalContent(
+      <form 
+        className = "flex flex-col justify-center items-center align-center"
+        onSubmit={(e) => {e.preventDefault(); increaseStatFromModal(stat, val*parseInt(modalRef.current.value)); setModal(false); console.log(modalRef.current.value)}}
+      >
+        {message?<div>{message}</div>:""}
+        <input
+          type='number'
+          inputMode='numeric'
+          pattern="[0-9]"
+          id="modalInput"
+          className={"mb-1 border-2 border-black"+numInput}
+          ref={modalRef}
+        />
+        <button 
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >Submit</button >
+      </form>
+    );
+    setModal(true); 
+  }
+
+  // Death Save Roll Settings
+  // =========================================
+
+      // check if you are dead
+      useEffect(() => {
+        if(!stats.dead){
+          if (stats.curHP<(-1*stats.maxHP) || !stats.deathSaves.fails.includes(false)) {
+            dead();
+          }
+          if (!stats.deathSaves.saves.includes(false)) {
+            ressurect();
+          }
+        }
+      }, [stats])
+
   function dead() {
-    alert("You dead, brah...")
-    ressurect();
+    console.log("You dead, brah...")
+    setStats({ ...stats, dead:true })
   }
 
   function ressurect() {
-    setStats({ ...stats, deathSaves: { saves: [false, false, false], fails: [false, false, false] } })
-    alert("Good job, brah.  You live.");
+    setStats({ ...stats, dead:false, curHP:1, deathSaves: { saves: [false, false, false], fails: [false, false, false] } })
+    console.log("Good job, brah.  You live.");
   }
 
   // Exporting Character Sheet
@@ -328,7 +335,7 @@ function CharacterSheet() {
   //  ========================================
 
   return (
-    <div onClick={e => setLoc(e)}>
+    <div className="relative" onClick={e => setLoc(e)} >
       <form className="grid grid-cols-3 bg-white shadow-lg rounded p-3 pb-5 pt-8 mb-4 md:w-3xl max-w-3xl min-w-3xl my-4 mx-auto">
         {/* 1/1 */}
         <div className="my-auto relative">
@@ -816,6 +823,19 @@ function CharacterSheet() {
 
       {/* Modals */}
       <Modal visible={modal} loc={mouseRef.current} content={modalContent} close={() => { setModal(false) }}></Modal>
+
+      {/* dead popup */}
+      {stats.dead?
+        <div id="dead" className="flex flex-col items-center">
+          <div id="deadLabel">DEAD</div>
+          <button
+            className="bg-blue-500 hover:bg-blue-300 w-32 border-2 border-white shadow text-white font-bold py-2 px-4 rounded"
+            onClick={()=>(ressurect())}
+          >Ressurect Me!</button>
+        </div>
+        :
+        ""
+      }
     </div>
   );
 }

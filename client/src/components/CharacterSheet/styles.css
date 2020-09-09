@@ -116,6 +116,38 @@ input, .input{
 	        animation: jello-horizontal 3.5s both infinite;
 }
 
+#dead{
+  position:absolute;
+  top:0px;
+  bottom:0px;
+  left:0px;
+  right:0px;
+  background: rgba(204,204,204,.7);
+  z-index:100;
+}
+
+#deadLabel{
+  text-align:center;
+  font-size:100px;
+  width:320px;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:100px;
+  margin-bottom:100px;
+  font-weight:900;
+  border:6px solid #B00;
+  border-radius:50px;
+  transform: rotate(-20deg);
+
+  color:#B00;
+  -webkit-text-fill-color: #B00; /* Will override color (regardless of order) */
+  -webkit-text-stroke-width: 3px;
+  -webkit-text-stroke-color: black;
+  text-shadow:5px 5px 5px black;
+
+  box-shadow:2px 2px 5px 5px black;
+}
+
 /* Animations*/
 
 /* ----------------------------------------------

@@ -27,6 +27,22 @@ Colors
     background:#EF941B;
 }
 
+.text-lblue{
+    color:#908999;
+}
+.text-dblue{
+    color:#001A2F;
+}
+.text-dark{
+    color:#1B1515;
+}
+.text-red{
+    color:#993F18;
+}
+.text-gold{
+    color:#EF941B;
+}
+
 .text-xxs{
     font-size: 0.625rem;
 }
