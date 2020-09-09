@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import Modal from "../Modal";
 import TextareaAutosize from 'react-textarea-autosize';
 import './styles.css';
+import useWindowSize from "../useWindowSize";
 // import { Link } from "react-router-dom";
 // import API from "../../utils/API";
 
@@ -16,11 +17,13 @@ function CharacterSheet() {
 
   const playerclass = useRef(0);
 
+  const windowSize = useWindowSize();
+
 
   // Modal Setup
   // =================================
   const modalRef = useRef(0);
-  const mouseRef = useRef({x:0, y:0});
+  const mouseRef = useRef({x:0, y:0, side:"right"});
 
   const [modal, setModal] = useState(false);
   const [modalContent, setModalContent] = useState("");
@@ -28,7 +31,8 @@ function CharacterSheet() {
   // set reference for modal location each time you click
   function setLoc(e) {
     console.log(e);
-    mouseRef.current = { x: e.pageX, y: e.pageY };
+    console.log( "x:",e.pageX-windowRef.current>100?e.pageX:windowRef.current-e.pageX, "y:", e.pageY, "side:", e.pageX-windowRef.current>100?"left":"right" );
+    mouseRef.current = { x: windowRef.current-e.pageX>100?e.pageX:windowRef.current-e.pageX, y: e.pageY, side:windowRef.current-e.pageX>100?"left":"right" };
     console.log(mouseRef.current);
   }
 
@@ -218,14 +222,22 @@ function CharacterSheet() {
   // Helpers for StatUpdate
   //=================================
 
-  function modaling(stat, val) {
+  const windowRef = useRef(0);
+  useEffect(()=>{
+    windowRef.current=windowSize
+  },[windowSize])
+
+  function modaling(stat, val, message="") {
     setModalContent(
       <form 
         className = "flex flex-col justify-center items-center align-center"
-        onSubmit={(e) => {e.preventDefault();; increaseStatFromModal(stat, val*parseInt(modalRef.current.value)); setModal(false); console.log(modalRef.current.value)}}
+        onSubmit={(e) => {e.preventDefault(); increaseStatFromModal(stat, val*parseInt(modalRef.current.value)); setModal(false); console.log(modalRef.current.value)}}
       >
+        {message?<div>{message}</div>:""}
         <input
-          type="text"
+          type='number'
+          inputMode='numeric'
+          pattern="[0-9]"
           id="modalInput"
           className={"mb-1 border-2 border-black"+numInput}
           ref={modalRef}
@@ -236,8 +248,7 @@ function CharacterSheet() {
         >Submit</button >
       </form>
     );
-    setModal(true);
-    
+    setModal(true); 
   }
 
   function increaseStatFromModal(stat, val){
@@ -592,7 +603,7 @@ function CharacterSheet() {
                 {stats.healthRolls.length < stats.level ?
                   <div
                     className="statChange alert"
-                    onClick={() => { modaling("hp", 10) }}
+                    onClick={() => { modaling("hp", 1, `Health Roll for Level ${stats.healthRolls.length}`) }}
                   >
                     !
                 </div>
