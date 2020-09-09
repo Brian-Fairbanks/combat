@@ -270,6 +270,7 @@ function CharacterSheet() {
           break;
         case "tempHP":
           setStats({...stats, tempHP: stats.tempHP+val,  curHP: stats.curHP+val});
+          break;
       default:
         break;
     }
@@ -612,9 +613,9 @@ function CharacterSheet() {
                 }
 
                 <div>
-                  <img className="inline-block mr-3" width="16px" height="auto" src={require('./attack.png')} onClick={() => { modaling("curHP", -1) }} />
+                  <img className="inline-block mr-3" width="16px" height="auto" alt="v" src={require('./attack.png')} onClick={() => { modaling("curHP", -1) }} />
                   {`${stats.curHP} / ${stats.maxHP}`}
-                  <img className="inline-block ml-3" width="16px" height="auto" src={require('./heal.png')} onClick={() => { modaling("curHP", 1) }} />
+                  <img className="inline-block ml-3" width="16px" height="auto" alt="^"src={require('./heal.png')} onClick={() => { modaling("curHP", 1) }} />
                 </div>
                 <div className="text-2xs text-center font-bold" >
                   Current Hit Points
@@ -626,9 +627,9 @@ function CharacterSheet() {
             <div className="w-full marginFix">
               <div className="statBorder col-span-3 flex flex-col items-center align-center">
                 <div>
-                  <img className="inline-block mr-3" width="16px" height="auto" src={require('./attack.png')} onClick={() => { modaling("tempHP", -1) }} />
+                  <img className="inline-block mr-3" width="16px" height="auto" alt="v" src={require('./attack.png')} onClick={() => { modaling("tempHP", -1) }} />
                   {stats.tempHP}
-                  <img className="inline-block ml-3" width="16px" height="auto" src={require('./heal.png')} onClick={() => { modaling("tempHP", 1) }} />
+                  <img className="inline-block ml-3" width="16px" height="auto" alt="^" src={require('./heal.png')} onClick={() => { modaling("tempHP", 1) }} />
                 </div>
                 <div className="text-2xs text-center font-bold" >
                   Temporary Hit Points
@@ -787,7 +788,7 @@ function CharacterSheet() {
         </div>
 
         {/* 4/1 */}
-        <div className="py-2 ">
+        <div className="py-2 mt-2 mr-2">
           <div className="w-full h-full statBorder flex flex-col items-center align-center">
             <div className="flex-grow py-2">
               {"P H V"}
@@ -799,7 +800,7 @@ function CharacterSheet() {
         </div>
 
         {/* 4/2 */}
-        <div className="p-2 col-span-2">
+        <div className="p-2 mt-2 col-span-2">
           <div className="w-full h-full statBorder flex flex-col items-center align-center">
             <div className="flex-grow py-2">
               {"P H V"}
