@@ -8,12 +8,20 @@ const numInput = "shadow appearance-none w-1/2 rounded p-1 text-gray-700 text-xs
 function Logic() {
 
   // runs once page loads, and stats are populated from the database
+  const [firstRun, setFirstRun] = useState();
   useEffect(() => {
-    console.log(stats.proficiency)
-    statList.forEach(stat => {
-      statUpdate(stat, stats[stat], { type: "first" });
-    })
-  }, [])
+    if (!firstRun) {
+      statList.forEach(stat => {
+        statUpdate(stat, stats["base" + stat], { type: "first" });
+      })
+      setFirstRun("Feats")
+    }
+
+    else if (firstRun === "Feats") {
+      applyFeats();
+    }
+
+  }, [firstRun])
 
 
   // Stats Setup
@@ -42,12 +50,27 @@ function Logic() {
     bonds: "I fight for those who can not fight for themselves (the sea folk)",
     flaws: "I have little resprct for those who are not a proven warrior",
 
-    str: 20,
-    dex: 14,
-    con: 16,
-    int: 12,
-    wis: 14,
-    cha: 18,
+    str: 0,
+    dex: 0,
+    con: 0,
+    int: 0,
+    wis: 0,
+    cha: 0,
+
+    basestr: 20,
+    basedex: 14,
+    basecon: 16,
+    baseint: 12,
+    basewis: 14,
+    basecha: 18,
+
+    featstr: 0,
+    featdex: 0,
+    featcon: 0,
+    featint: 0,
+    featwis: 0,
+    featcha: 0,
+
 
     strRolls: [
       { name: "Saving Throws", score: 0, proficient: false, toolTip: "" },
@@ -89,8 +112,28 @@ function Logic() {
       { name: "Intimidation", score: 0, proficient: true, toolTip: "" },
       { name: "Performance", score: 0, proficient: false, toolTip: "" },
       { name: "Persuasion", score: 0, proficient: true, toolTip: "" },
+    ],
+
+    feats: [
+      { name: "Con+2", statEffects: { stat: "con", val: 2 } },
+      { name: "Dex+2", statEffects: { stat: "dex", val: 2 } }
     ]
   });
+
+  // apply all stats from feats
+  function applyFeats() {
+    let valsToSet = { featstr: 0, featdex: 0, featcon: 0, featint: 0, featwis: 0, featcha: 0 }
+    stats.feats.forEach(feat => {
+      console.log(feat);
+      if (feat.statEffects) {
+        let stat = feat.statEffects.stat;
+        valsToSet["feat" + stat] += feat.statEffects.val
+        statUpdate(stat, stats["base" + stat], { type: "feat", val: feat.statEffects });
+      }
+
+      statUpdate(null, null, { type: "feat", val: valsToSet });
+    })
+  }
 
   // any time a user manually changes a stat value
   function statChangeHandler(stat, val) {
@@ -127,9 +170,12 @@ function Logic() {
   // updates a stat, and modifies all associated numbers
   //=======================================================
   function statUpdate(stat, statVal, data) {
-    // console.log(`setting ${stat+"Mod"} to ${Math.floor( stats[stat] /2)-5}`)
-    let statMod = Math.floor(statVal / 2) - 5;
+    statVal = parseInt(statVal);
     let valsToSet = {};
+
+    // console.log(`setting ${stat+"Mod"} to ${Math.floor( stats[stat] /2)-5}`)
+    let buffedStat = statVal + stats["feat" + stat]
+    let statMod = Math.floor(buffedStat / 2) - 5;
 
     console.log(data);
     // when changing proficiency...
@@ -145,14 +191,46 @@ function Logic() {
       })
 
     }
-    // for all else...
+
+    else if (data.type === "feat") {
+      valsToSet = { ...valsToSet, ...data.val }
+
+      statList.forEach(stat => {
+        let buffedStat = stats[stat] + valsToSet["feat" + stat];
+        let statMod = Math.floor(buffedStat / 2) - 5;
+
+        valsToSet = {
+          ...valsToSet,
+          [stat]: buffedStat,
+          [stat + "Mod"]: statMod
+        }
+      })
+
+      // valsToSet["passiveWisdom"] = 10 + (valsToSet["wisRolls"].find(roll => (roll.name === "Perception")).score)
+
+      let healthFromRolls = 0;
+      stats.healthRolls.forEach(roll => {
+        healthFromRolls += roll;
+      })
+      valsToSet["maxHP"] = healthFromRolls + ((valsToSet.conMod * stats.level) * stats.level);
+
+      valsToSet["maxHP"] = healthFromRolls + ((valsToSet.conMod * stats.level) * stats.level);
+
+      valsToSet["ac"] = (valsToSet.dexMod);
+      valsToSet["initiative"] = (valsToSet.dexMod);
+
+      console.log(valsToSet)
+    }
+    // for single stat ...
     else {
       valsToSet = {
-        [stat]: statVal,
+        ["base" + stat]: statVal,
+        [stat]: buffedStat,
         [stat + "Mod"]: statMod
       }
 
       valsToSet[stat + "Rolls"] = (updateChecks(stats[stat + "Rolls"], stat, statMod, data));
+
 
       switch (stat) {
         case "wis":
@@ -169,8 +247,9 @@ function Logic() {
           valsToSet["ac"] = (valsToSet.dexMod);
           valsToSet["initiative"] = (valsToSet.dexMod);
           break;
-        default:
+        default: // run all
           break;
+
       }
 
     }
@@ -324,12 +403,12 @@ function Logic() {
       <CharacterSheet
         stats={stats}
         modal={modal}
-        modalContent = {modalContent}
-        mouseRef = {mouseRef}
+        modalContent={modalContent}
+        mouseRef={mouseRef}
 
         setStats={setStats}
         setModal={setModal}
-        setModalContent = {setModalContent}
+        setModalContent={setModalContent}
         setLoc={setLoc}
 
         modaling={modaling}

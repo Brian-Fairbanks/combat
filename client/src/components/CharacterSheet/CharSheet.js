@@ -185,7 +185,7 @@ return (
                         className={numInput}
                         id="class"
                         type="text"
-                        defaultValue={props.stats[stat]}
+                        defaultValue={props.stats["base"+stat]}
                         // ref={eval("player"+stat)}
                         onChange={e => props.statChangeHandler(stat, e.target.value)}
                       />
@@ -473,7 +473,13 @@ return (
         <div className="py-2 px-0 sm:py-0 sm:px-2 col-span-2 sm:col-span-1">
           <div className="w-full h-full statBorder flex flex-col items-center align-center">
             <div className="flex-grow py-2">
-              {"P H V"}
+              {props.stats.feats.map(feat => {
+                return(
+                  <div className="text-xs">
+                    {feat.name}
+                  </div>
+                )
+              })}
             </div>
             <div className="text-2xs text-center font-bold" >
               FEATURES AND TRAITS
