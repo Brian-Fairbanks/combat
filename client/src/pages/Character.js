@@ -1,12 +1,11 @@
 import React from "react";
-import Hero from "../components/Hero";
-import CharacterSheet from "../components/CharacterSheet";
+import Logic from "../components/CharacterSheet/Logic";
 
 function Character() {
 
     return (
         <div>
-            <CharacterSheet />
+            <Logic />
         </div>
     );
 }
