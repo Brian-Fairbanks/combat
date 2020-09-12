@@ -189,6 +189,7 @@ return (
                         // ref={eval("player"+stat)}
                         onChange={e => props.statChangeHandler(stat, e.target.value)}
                       />
+                      {props.stats["feat"+stat]}
                     </div>
                     <div className="flex flex-col w-full h-full">
                       <div className="font-bold text-xl flex-auto flex align-center justify-center items-center">
@@ -476,7 +477,7 @@ return (
               {props.stats.feats.map(feat => {
                 return(
                   <div className="text-xs">
-                    {feat.name}
+                    <div className="font-bold inline-block">{feat.name}</div>{" : "+ feat.description}
                   </div>
                 )
               })}

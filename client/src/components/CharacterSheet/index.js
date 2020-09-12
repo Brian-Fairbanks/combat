@@ -18,6 +18,7 @@ function Logic() {
     }
 
     else if (firstRun === "Feats") {
+      console.log("========== Done with first pass ==========",stats)
       applyFeats();
     }
 
@@ -40,7 +41,9 @@ function Logic() {
     healthRolls: [10],
     tempHP: 0,
     ac: 0,
+
     initiative: 0,
+    // featinitiative: 0,
 
     deathSaves: { saves: [false, false, false], fails: [false, false, false] },
     dead: false,
@@ -64,12 +67,12 @@ function Logic() {
     basewis: 14,
     basecha: 18,
 
-    featstr: 0,
-    featdex: 0,
-    featcon: 0,
-    featint: 0,
-    featwis: 0,
-    featcha: 0,
+    // featstr: 0,
+    // featdex: 0,
+    // featcon: 0,
+    // featint: 0,
+    // featwis: 0,
+    // featcha: 0,
 
 
     strRolls: [
@@ -116,23 +119,26 @@ function Logic() {
 
     feats: [
       { name: "Con+2", statEffects: { stat: "con", val: 2 } },
-      { name: "Dex+2", statEffects: { stat: "dex", val: 2 } }
+      { name: "Dex+2", statEffects: { stat: "dex", val: 2 } },
+      { name: "Alert", description: "+5 Initiative, can't be surprised, no advantage for hidden attackers ", statEffects: { stat: "initiative", val: 5 } }
     ]
   });
 
   // apply all stats from feats
   function applyFeats() {
-    let valsToSet = { featstr: 0, featdex: 0, featcon: 0, featint: 0, featwis: 0, featcha: 0 }
+    let valsToSet = {};
     stats.feats.forEach(feat => {
       console.log(feat);
       if (feat.statEffects) {
         let stat = feat.statEffects.stat;
+        if(!valsToSet["feat"+stat]){valsToSet["feat"+stat]=0};
         valsToSet["feat" + stat] += feat.statEffects.val
-        statUpdate(stat, stats["base" + stat], { type: "feat", val: feat.statEffects });
+        console.log(valsToSet);
+        // statUpdate(stat, stats["base" + stat], { type: "feat", val: feat.statEffects });
       }
-
-      statUpdate(null, null, { type: "feat", val: valsToSet });
     })
+    console.log("================ APPLYING FEATS! ====================")
+    statUpdate(null, null, { type: "feat", val: valsToSet });
   }
 
   // any time a user manually changes a stat value
@@ -174,7 +180,8 @@ function Logic() {
     let valsToSet = {};
 
     // console.log(`setting ${stat+"Mod"} to ${Math.floor( stats[stat] /2)-5}`)
-    let buffedStat = statVal + stats["feat" + stat]
+    let buffedStat = (stats["feat" + stat]?stats["feat" + stat]:0) + statVal
+    console.log(stat," : ",statVal,"  ",buffedStat)
     let statMod = Math.floor(buffedStat / 2) - 5;
 
     console.log(data);
@@ -196,7 +203,7 @@ function Logic() {
       valsToSet = { ...valsToSet, ...data.val }
 
       statList.forEach(stat => {
-        let buffedStat = stats[stat] + valsToSet["feat" + stat];
+        let buffedStat = stats[stat] + (valsToSet["feat" + stat]?valsToSet["feat" + stat]:0);
         let statMod = Math.floor(buffedStat / 2) - 5;
 
         valsToSet = {
@@ -214,10 +221,8 @@ function Logic() {
       })
       valsToSet["maxHP"] = healthFromRolls + ((valsToSet.conMod * stats.level) * stats.level);
 
-      valsToSet["maxHP"] = healthFromRolls + ((valsToSet.conMod * stats.level) * stats.level);
-
-      valsToSet["ac"] = (valsToSet.dexMod);
-      valsToSet["initiative"] = (valsToSet.dexMod);
+      valsToSet["ac"] = (valsToSet.dexMod + (valsToSet.featac?valsToSet.featac:0));
+      valsToSet["initiative"] = (valsToSet.dexMod + (valsToSet.featinitiative?valsToSet.featinitiative:0));
 
       console.log(valsToSet)
     }
@@ -244,8 +249,8 @@ function Logic() {
           valsToSet["maxHP"] = healthFromRolls + ((valsToSet.conMod * stats.level) * stats.level);
           break;
         case "dex":
-          valsToSet["ac"] = (valsToSet.dexMod);
-          valsToSet["initiative"] = (valsToSet.dexMod);
+          valsToSet["ac"] = (valsToSet.dexMod + (stats.featac?stats.featac:0));
+          valsToSet["initiative"] = (valsToSet.dexMod + (stats.featinitiative?stats.featinitiative:0));
           break;
         default: // run all
           break;

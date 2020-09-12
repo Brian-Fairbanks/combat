@@ -34,7 +34,7 @@ app.use(passport.session());
 app.use(routes);
 
 // connect to MongoDB
-mongoose.connect(process.env.mongoAtlasURI, {
+mongoose.connect(process.env.mongoAtlasURI || "mongodb://localhost/monster-world", {
   useUnifiedTopology: true,
   useNewUrlParser: true,
   useFindAndModify: false
