@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import useWindowSize from "../useWindowSize";
 import CharacterSheet from "./CharSheet";
-import { set } from "mongoose";
 
 const statList = ["str", "dex", "con", "int", "wis", "cha"];
 const numInput = "shadow appearance-none w-1/2 rounded p-1 text-gray-700 text-xs leading-tight focus:outline-none focus:shadow-outline text-center";
@@ -52,7 +51,7 @@ function Logic() {
     personality: `You phrase your requests as orders and expect others to obey`,
     ideals: "in life as in war, the stronger force wins",
     bonds: "I fight for those who can not fight for themselves (the sea folk)",
-    flaws: "I have little resprct for those who are not a proven warrior",
+    flaws: "I have little respect for those who are not a proven warrior",
 
     str: 0,
     dex: 0,
@@ -338,6 +337,7 @@ function Logic() {
           id="modalInput"
           className={"mb-1 border-2 border-black" + numInput}
           ref={modalRef}
+          autoFocus
         />
         <button
           type="submit"
@@ -358,7 +358,7 @@ function Logic() {
         dead();
       }
       if (!stats.deathSaves.saves.includes(false)) {
-        ressurect();
+        resurrect();
       }
     }
   }, [stats])
@@ -368,7 +368,7 @@ function Logic() {
     setStats({ ...stats, dead: true })
   }
 
-  function ressurect() {
+  function resurrect() {
     setStats({ ...stats, dead: false, curHP: 1, deathSaves: { saves: [false, false, false], fails: [false, false, false] } })
     console.log("Good job, brah.  You live.");
   }
@@ -397,7 +397,7 @@ function Logic() {
         profChangeHandler={profChangeHandler}
         baseProfChangeHandler={baseProfChangeHandler}
         singleChangeHandler={singleChangeHandler}
-        ressurect={ressurect}
+        resurrect={resurrect}
       />
     </div>
   )

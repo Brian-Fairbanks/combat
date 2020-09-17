@@ -7,7 +7,7 @@ import './styles.css';
 
 const vertInput = "shadow appearance-none w-full rounded p-1 text-gray-700 text-xs leading-tight focus:outline-none focus:shadow-outline";
 // const horInput = "shadow appearance-none w-1/4 rounded p-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block";
-const numInput = "shadow appearance-none w-1/2 rounded p-1 text-gray-700 text-xs leading-tight focus:outline-none focus:shadow-outline text-center";
+const numInput = "shadow appearance-none w-3/5 rounded p-1 text-gray-700 text-xs leading-tight focus:outline-none focus:shadow-outline text-center";
 const text = "input appearance-none rounded-lg text-gray-700 w-full flex-grow p-1 text-xs leading-tight focus:outline-none focus:shadow-outline ";
 
 const statList = ["str", "dex", "con", "int", "wis", "cha"];
@@ -60,7 +60,7 @@ return (
             <input
               className={vertInput}
               id="class"
-              type="text"
+              type="number"
               value={props.stats.level}
               onChange={e => props.singleChangeHandler("level", e.target.value)}
             />
@@ -182,7 +182,7 @@ return (
                   <div className="statNum w-2/3 sm:w-16 styledBorder text-center mx-auto sm:mx-0">
                     <div className="statTop">
                       <input
-                        className={numInput}
+                        className={numInput+" styledBorder"}
                         id="class"
                         type="number"
                         defaultValue={props.stats["base"+stat]}
@@ -524,8 +524,8 @@ return (
           <div id="deadLabel">DEAD</div>
           <button
             className="bg-blue-500 hover:bg-blue-300 w-32 border-2 border-white shadow text-white font-bold py-2 px-4 rounded"
-            onClick={()=>(props.ressurect())}
-          >Ressurect Me!</button>
+            onClick={()=>(props.resurrect())}
+          >Resurrect Me!</button>
         </div>
         :
         ""
