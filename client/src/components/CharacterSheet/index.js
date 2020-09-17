@@ -1,28 +1,29 @@
 import React, { useRef, useState, useEffect } from "react";
 import useWindowSize from "../useWindowSize";
 import CharacterSheet from "./CharSheet";
+import { set } from "mongoose";
 
 const statList = ["str", "dex", "con", "int", "wis", "cha"];
 const numInput = "shadow appearance-none w-1/2 rounded p-1 text-gray-700 text-xs leading-tight focus:outline-none focus:shadow-outline text-center";
 
 function Logic() {
 
-  // runs once page loads, and stats are populated from the database
-  const [firstRun, setFirstRun] = useState();
-  useEffect(() => {
-    if (!firstRun) {
-      statList.forEach(stat => {
-        statUpdate(stat, stats["base" + stat], { type: "first" });
-      })
-      setFirstRun("Feats")
-    }
 
-    else if (firstRun === "Feats") {
-      console.log("========== Done with first pass ==========",stats)
-      applyFeats();
-    }
 
-  }, [firstRun])
+  // useEffect(() => {
+  //   if (!firstRun) {
+  //     statList.forEach(stat => {
+  //       // statUpdate(stat, stats["base" + stat], { type: "first" });
+  //     })
+  //     setFirstRun("Feats")
+  //   }
+
+  //   else if (firstRun === "Feats") {
+  //     console.log("========== Done with first pass ==========", stats)
+  //     // getFeatVals();
+  //   }
+
+  // }, [firstRun])
 
 
   // Stats Setup
@@ -66,13 +67,6 @@ function Logic() {
     baseint: 12,
     basewis: 14,
     basecha: 18,
-
-    // featstr: 0,
-    // featdex: 0,
-    // featcon: 0,
-    // featint: 0,
-    // featwis: 0,
-    // featcha: 0,
 
 
     strRolls: [
@@ -120,40 +114,46 @@ function Logic() {
     feats: [
       { name: "Con+2", statEffects: { stat: "con", val: 2 } },
       { name: "Dex+2", statEffects: { stat: "dex", val: 2 } },
-      { name: "Alert", description: "+5 Initiative, can't be surprised, no advantage for hidden attackers ", statEffects: { stat: "initiative", val: 5 } }
+      { name: "Alert", description: "+5 Initiative, can't be surprised, no advantage for hidden attackers ", statEffects: { stat: "initiative", val: 5 } },
+      { name: "Tough", description: "gain 2 hit points per character level", statEffects: { stat: "maxHP", val: "stats.level*2" } }
     ]
   });
 
-  // apply all stats from feats
-  function applyFeats() {
-    let valsToSet = {};
-    stats.feats.forEach(feat => {
-      console.log(feat);
-      if (feat.statEffects) {
-        let stat = feat.statEffects.stat;
-        if(!valsToSet["feat"+stat]){valsToSet["feat"+stat]=0};
-        valsToSet["feat" + stat] += feat.statEffects.val
-        console.log(valsToSet);
-        // statUpdate(stat, stats["base" + stat], { type: "feat", val: feat.statEffects });
-      }
-    })
-    console.log("================ APPLYING FEATS! ====================")
-    statUpdate(null, null, { type: "feat", val: valsToSet });
-  }
+
+  // runs once page loads, and stats are populated from the database
+  const [toUpdate, setToUpdate] = useState(true);
+
+  useEffect(() => {
+    if (toUpdate) {
+      setToUpdate(!toUpdate);
+      updateAll();
+    }
+  }, [stats])
+
+
 
   // any time a user manually changes a stat value
   function statChangeHandler(stat, val) {
-    statUpdate(stat, val, { type: "stat" });
+    setStats({...stats, ["base"+stat]:parseInt(val)})
+    setToUpdate(!toUpdate);
   }
 
   // any time a user manually changes a skill value
   function profChangeHandler(stat, index, val) {
-    statUpdate(stat, stats[stat], { type: "prof", index, val });
+    // set stat
+    let rolls = { [stat + "Rolls"]: stats[stat + "Rolls"] };
+    rolls[stat + "Rolls"][index].proficient = val;
+    setStats({ ...stats, ...rolls });
+    // prepare to updateAll
+    setToUpdate(!toUpdate);
   }
 
   // when the user changes the Proficiency value
   function baseProfChangeHandler(val) {
-    statUpdate(null, val, { type: "baseProf", val });
+    setStats({ ...stats, proficiency:parseInt(val) });
+    // prepare to updateAll
+    setToUpdate(!toUpdate);
+    // statUpdate(null, val, { type: "baseProf", val });
   }
 
   // Changing a single stat, which will not effect anythig else
@@ -170,103 +170,111 @@ function Logic() {
       ...prevState,
       ...temp
     }));
+    setToUpdate(!toUpdate);
   }
 
 
-  // updates a stat, and modifies all associated numbers
-  //=======================================================
-  function statUpdate(stat, statVal, data) {
-    statVal = parseInt(statVal);
-    let valsToSet = {};
+//====================================================================
 
-    // console.log(`setting ${stat+"Mod"} to ${Math.floor( stats[stat] /2)-5}`)
-    let buffedStat = (stats["feat" + stat]?stats["feat" + stat]:0) + statVal
-    console.log(stat," : ",statVal,"  ",buffedStat)
-    let statMod = Math.floor(buffedStat / 2) - 5;
+// ||  Function to update all stats, and fill out the player sheet 
 
-    console.log(data);
-    // when changing proficiency...
-    if (data.type === "baseProf") {
-      console.log("Only chaning proficiency");
-      valsToSet = {
-        PROFICIENCY: statVal
-      }
-      statList.forEach(stat => {
-        statMod = Math.floor(stats[stat] / 2) - 5;
-        console.log(statMod);
-        valsToSet[stat + "Rolls"] = (updateChecks(stats[stat + "Rolls"], stat, statMod, data));
-      })
+//====================================================================
 
-    }
+  async function updateAll() {
+    // copy current stat list into new array
+    let valsToSet = { ...stats };
 
-    else if (data.type === "feat") {
-      valsToSet = { ...valsToSet, ...data.val }
+    // first round changes
+    statList.forEach(stat => {
+      let theseStats = calcStats(stat, valsToSet);
+      valsToSet = { ...valsToSet, ...theseStats };
+    })
 
-      statList.forEach(stat => {
-        let buffedStat = stats[stat] + (valsToSet["feat" + stat]?valsToSet["feat" + stat]:0);
-        let statMod = Math.floor(buffedStat / 2) - 5;
+    // apply feats
+    valsToSet = getFeatVals(valsToSet)
+    console.log(valsToSet);
 
-        valsToSet = {
-          ...valsToSet,
-          [stat]: buffedStat,
-          [stat + "Mod"]: statMod
-        }
-      })
+    // apply equip
 
-      // valsToSet["passiveWisdom"] = 10 + (valsToSet["wisRolls"].find(roll => (roll.name === "Perception")).score)
+    // reupdate everything
+    statList.forEach(stat => {
+      let theseStats = calcStats(stat, valsToSet);
+      valsToSet = { ...valsToSet, ...theseStats };
+    })
 
-      let healthFromRolls = 0;
-      stats.healthRolls.forEach(roll => {
-        healthFromRolls += roll;
-      })
-      valsToSet["maxHP"] = healthFromRolls + ((valsToSet.conMod * stats.level) * stats.level);
-
-      valsToSet["ac"] = (valsToSet.dexMod + (valsToSet.featac?valsToSet.featac:0));
-      valsToSet["initiative"] = (valsToSet.dexMod + (valsToSet.featinitiative?valsToSet.featinitiative:0));
-
-      console.log(valsToSet)
-    }
-    // for single stat ...
-    else {
-      valsToSet = {
-        ["base" + stat]: statVal,
-        [stat]: buffedStat,
-        [stat + "Mod"]: statMod
-      }
-
-      valsToSet[stat + "Rolls"] = (updateChecks(stats[stat + "Rolls"], stat, statMod, data));
-
-
-      switch (stat) {
-        case "wis":
-          valsToSet["passiveWisdom"] = 10 + (valsToSet["wisRolls"].find(roll => (roll.name === "Perception")).score)
-          break;
-        case "con":
-          let healthFromRolls = 0;
-          stats.healthRolls.forEach(roll => {
-            healthFromRolls += roll;
-          })
-          valsToSet["maxHP"] = healthFromRolls + ((valsToSet.conMod * stats.level) * stats.level);
-          break;
-        case "dex":
-          valsToSet["ac"] = (valsToSet.dexMod + (stats.featac?stats.featac:0));
-          valsToSet["initiative"] = (valsToSet.dexMod + (stats.featinitiative?stats.featinitiative:0));
-          break;
-        default: // run all
-          break;
-
-      }
-
-    }
-
+    // set final update to stats
     setStats((prevState) => ({
       ...prevState,
       ...valsToSet
     }));
   }
 
-  // Helpers for StatUpdate
+
+  // Helpers for updateAll
   //=================================
+
+  function calcStats(stat, theseStats) {
+    let valsToSet = {};
+    let buffedStat = theseStats["base" + stat] + (theseStats["feat" + stat] ? theseStats["feat" + stat] : 0);
+    let statMod = Math.floor(buffedStat / 2) - 5;
+
+    valsToSet = {
+      ...theseStats,
+      [stat]: buffedStat,
+      [stat + "Mod"]: statMod
+    }
+
+    valsToSet[stat + "Rolls"] = (applyProficiencyToSkills(theseStats, stat, statMod, theseStats.proficiency));
+
+
+    switch (stat) {
+      case "wis":
+        console.log(valsToSet);
+        valsToSet["passiveWisdom"] = 10 + (valsToSet["wisRolls"].find(roll => (roll.name === "Perception")).score)
+        break;
+      case "con":
+        let healthFromRolls = 0;
+        theseStats.healthRolls.forEach(roll => {
+          healthFromRolls += roll;
+        })
+        valsToSet["maxHP"] = (valsToSet["featmaxHP"] ? valsToSet["featmaxHP"] : 0) + healthFromRolls + ((valsToSet.conMod * theseStats.level));
+        break;
+      case "dex":
+        valsToSet["ac"] = (valsToSet.dexMod + (theseStats.featac ? theseStats.featac : 0));
+        valsToSet["initiative"] = (valsToSet.dexMod + (theseStats.featinitiative ? theseStats.featinitiative : 0));
+        break;
+      default:
+        break;
+    }
+
+    return valsToSet;
+  }
+
+
+  // apply all stats from feats
+  function getFeatVals(theseStats) {
+    let valsToSet = {};
+    theseStats.feats.forEach(feat => {
+      if (feat.statEffects) {
+        let stat = feat.statEffects.stat;
+        let val = eval(feat.statEffects.val)
+        if (!valsToSet["feat" + stat]) { valsToSet["feat" + stat] = 0 };
+        valsToSet["feat" + stat] += val
+      }
+    })
+    console.log("================ APPLYING FEATS! ====================")
+    return {...theseStats, ...valsToSet}
+  }
+
+  function applyProficiencyToSkills(theseStats, stat, statMod, profBoost) {
+    return theseStats[stat + "Rolls"].map((roll) => {
+      let score = roll.proficient ? profBoost + statMod : statMod;
+      return (
+        { ...roll, score }
+      )
+    });
+  }
+
 
   function increaseStatFromModal(stat, val) {
     switch (stat) {
@@ -279,7 +287,7 @@ function Logic() {
         hpList.forEach(roll => {
           healthFromRolls += roll;
         })
-        let HP = healthFromRolls + (stats.conMod * stats.level);
+        let HP = (stats["featmaxHP"] ? stats["featmaxHP"] : 0) + healthFromRolls + (stats.conMod * stats.level);
         setStats({ ...stats, healthRolls: hpList, maxHP: HP });
         break;
       case "curHP":
@@ -294,38 +302,6 @@ function Logic() {
         break;
     }
   }
-
-  function updateChecks(valsToSet, stat, statMod, data) {
-    let profBoost = stats.proficiency;
-    let score;
-
-    if (data.type === "baseProf") {
-      profBoost = data.val;
-    }
-
-    return valsToSet.map((roll, index) => {
-      let prof = {};
-      score = roll.proficient ? profBoost + statMod : statMod;
-
-      // check if a skill proficiency needs to be changed
-      if (data.type === "prof" && data.index === index) {
-        console.log(`Change Proficiency for ${roll.name} to ${data.val}`)
-        prof = { proficient: data.val };
-        score = prof.proficient ? profBoost + statMod : statMod;
-      }
-
-      return (
-        {
-          ...roll,
-          score,
-          ...prof
-        }
-      )
-    });
-  }
-
-
-
   // Modal Setup
   // =================================
   const windowSize = useWindowSize();
@@ -337,10 +313,10 @@ function Logic() {
 
   // set reference for modal location each time you click
   function setLoc(e) {
-    console.log(e);
-    console.log("x:", e.pageX - windowRef.current > 100 ? e.pageX : windowRef.current - e.pageX, "y:", e.pageY, "side:", e.pageX - windowRef.current > 100 ? "left" : "right");
+    // console.log(e);
+    // console.log("x:", e.pageX - windowRef.current > 100 ? e.pageX : windowRef.current - e.pageX, "y:", e.pageY, "side:", e.pageX - windowRef.current > 100 ? "left" : "right");
     mouseRef.current = { x: windowRef.current - e.pageX > 100 ? e.pageX : windowRef.current - e.pageX, y: e.pageY, side: windowRef.current - e.pageX > 100 ? "left" : "right" };
-    console.log(mouseRef.current);
+    // console.log(mouseRef.current);
   }
 
   const windowRef = useRef(0);
@@ -419,6 +395,7 @@ function Logic() {
         modaling={modaling}
         statChangeHandler={statChangeHandler}
         profChangeHandler={profChangeHandler}
+        baseProfChangeHandler={baseProfChangeHandler}
         singleChangeHandler={singleChangeHandler}
         ressurect={ressurect}
       />

@@ -184,7 +184,7 @@ return (
                       <input
                         className={numInput}
                         id="class"
-                        type="text"
+                        type="number"
                         defaultValue={props.stats["base"+stat]}
                         // ref={eval("player"+stat)}
                         onChange={e => props.statChangeHandler(stat, e.target.value)}
@@ -209,7 +209,7 @@ return (
                     </div>
                   </div>
                   <div className="rolls w-auto text-xxs pl-2  border-black sm:border-t pt-4 sm:pt-2">
-                    {props.stats[stat + "Rolls"].map((roll, index) => {
+                    {!props.stats[stat + "Rolls"]?"":props.stats[stat + "Rolls"].map((roll, index) => {
                       return (
                         <div className="flex items-center rollItem leading-2 my-1 sm:m-0" key={stat + roll.name}>
                           <input
