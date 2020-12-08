@@ -78,8 +78,7 @@ If you have any questions about this application, feel free to reach out to one 
 
 ## Demo
 Deployed to Heroku:
-* Staging: https://dice-rollerz-stg.herokuapp.com/
-* Production: https://dice-rollerz.herokuapp.com/
+* Staging: https://pure-headland-53064.herokuapp.com/Character
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
